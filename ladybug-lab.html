@@ -513,7 +513,7 @@ function readFamilyFromURL(){ const m=location.hash.match(/family=([0-9A-Za-z-]+
 function familyLink(){ return location.origin+location.pathname+"#family="+FAMILY.match(/.{1,4}/g).join("-"); }
 function newFamilyCode(){ const r=new Uint8Array(20); crypto.getRandomValues(r); return Array.from(r,x=>B32[x%32]).join(""); }
 async function rpc(fn,args){
-  const r = await fetch(WEB.supabaseUrl.replace(/\/$/,"")+"/rest/v1/rpc/"+fn, {method:"POST", headers:{apikey:WEB.supabaseKey, Authorization:"Bearer "+WEB.supabaseKey, "Content-Type":"application/json"}, body:JSON.stringify(args)});
+  const r = await fetch(WEB.supabaseUrl.replace(/\/$/,"")+"/rest/v1/rpc/"+fn, {method:"POST", headers:Object.assign({apikey:WEB.supabaseKey, "Content-Type":"application/json"}, /^eyJ/.test(WEB.supabaseKey)?{Authorization:"Bearer "+WEB.supabaseKey}:{}), body:JSON.stringify(args)});
   if(!r.ok) throw new Error("sync "+r.status); return r.json();
 }
 async function webPull(){

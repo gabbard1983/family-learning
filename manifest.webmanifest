@@ -1,11 +1,12 @@
 {
-  "name": "Summit",
-  "short_name": "Summit",
-  "start_url": "./",
+  "name": "Ladybug Lab",
+  "short_name": "Ladybug Lab",
+  "id": "index.html",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#fdf8ef",
-  "theme_color": "#D4622A",
+  "theme_color": "#e0483d",
   "icons": [
     {
       "src": "icon-192.png",

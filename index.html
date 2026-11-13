@@ -1,0 +1,1294 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ladybug Lab</title>
+<meta name="theme-color" content="#e0483d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Ladybug Lab">
+<script src="../config.js"></script>
+<style>html,body{margin:0}body{padding-top:max(12px,env(safe-area-inset-top,0px))!important}</style>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: one-column "crayon box" app, max 760px, big tap targets for a 7-year-old on iPad or iPhone */
+:root{
+  --bg:#fdf8ef; --card:#ffffff; --ink:#1f2a44; --soft:#6b7488; --line:#e7dcc8;
+  --blue:#2f6fd6; --red:#e0483d; --sun:#f6b81c; --leaf:#2f9e5b; --grape:#7b5bd6;
+  --blue-t:#e6efff; --red-t:#fde7e4; --sun-t:#fff3d1; --leaf-t:#e2f5e9; --grape-t:#eee8ff;
+  --shadow:0 4px 0 rgba(31,42,68,.12);
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --read:"Andika","Comic Sans MS",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a2b; --card:#1e263b; --ink:#f3efe6; --soft:#a7aec0; --line:#2f3954;
+  --blue:#6ea0ff; --red:#ff7a6e; --sun:#ffcb4d; --leaf:#5fd08f; --grape:#a98cff;
+  --blue-t:#22335a; --red-t:#4a2a2c; --sun-t:#463a1c; --leaf-t:#1f3d2d; --grape-t:#33295a;
+  --shadow:0 4px 0 rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a2b; --card:#1e263b; --ink:#f3efe6; --soft:#a7aec0; --line:#2f3954;
+  --blue:#6ea0ff; --red:#ff7a6e; --sun:#ffcb4d; --leaf:#5fd08f; --grape:#a98cff;
+  --blue-t:#22335a; --red-t:#4a2a2c; --sun-t:#463a1c; --leaf-t:#1f3d2d; --grape-t:#33295a;
+  --shadow:0 4px 0 rgba(0,0,0,.35); color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--read);font-size:18px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px;
+  -webkit-user-select:none;user-select:none}
+.app{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.1;text-wrap:balance}
+button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulation}
+button:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand h1{font-size:28px}
+.pills{display:flex;gap:8px}
+.pill{background:var(--card);border:2px solid var(--line);border-radius:999px;padding:4px 12px;font-family:var(--display);font-size:18px;display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.back{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:6px 14px;font-family:var(--display);font-size:18px}
+.hello{background:var(--card);border-radius:22px;padding:18px 20px;box-shadow:var(--shadow);display:flex;gap:16px;align-items:center}
+.hello h2{font-size:30px}
+.hello p{margin:4px 0 0;color:var(--soft)}
+.namebtn{background:none;color:var(--blue);text-decoration:underline;padding:0;font-size:16px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.tile{border-radius:22px;padding:16px;text-align:left;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px;min-height:130px;transition:transform .1s}
+.tile:active{transform:translateY(3px);box-shadow:none}
+.tile .ico{font-size:40px;line-height:1}
+.tile b{font-family:var(--display);font-size:22px}
+.tile span{font-size:15px;color:var(--soft)}
+.t-blue{background:var(--blue-t)}.t-red{background:var(--red-t)}.t-sun{background:var(--sun-t)}.t-leaf{background:var(--leaf-t)}.t-grape{background:var(--grape-t)}
+.section-h{font-size:22px;margin-top:6px}
+.week{font-size:14px;color:var(--soft)}
+/* game */
+.game{background:var(--card);border-radius:24px;padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center;min-height:420px}
+.prog{display:flex;gap:6px;justify-content:center}
+.prog i{width:14px;height:14px;border-radius:50%;background:var(--line);display:block}
+.prog i.done{background:var(--sun)}
+.prog i.now{background:var(--blue)}
+.prompt{font-size:20px;color:var(--soft);max-width:34ch}
+.big{font-family:var(--display);font-size:clamp(44px,12vw,76px);line-height:1;font-variant-numeric:tabular-nums}
+.word{font-family:var(--read);font-weight:700;font-size:clamp(48px,14vw,84px);letter-spacing:2px}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;max-width:460px}
+.choice{background:var(--blue-t);border:3px solid transparent;border-radius:18px;padding:16px 8px;font-family:var(--display);font-size:32px;box-shadow:var(--shadow);font-variant-numeric:tabular-nums}
+.choice.wordc{font-family:var(--read);font-weight:700;font-size:28px}
+.choice.eqc{font-size:clamp(20px,6vw,28px);white-space:nowrap}
+.choice:active{transform:translateY(3px);box-shadow:none}
+.choice.right{background:var(--leaf-t);border-color:var(--leaf)}
+.choice.wrong{background:var(--red-t);border-color:var(--red);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.hint{background:var(--sun-t);border-radius:14px;padding:10px 14px;font-size:18px;max-width:440px}
+.steps{font-size:20px;line-height:1.7;font-variant-numeric:tabular-nums}
+.steps .ok{color:var(--leaf);font-weight:700}
+.next{background:var(--leaf);color:#fff;font-family:var(--display);font-size:26px;border-radius:18px;padding:12px 34px;box-shadow:var(--shadow)}
+.speak{background:var(--grape-t);border-radius:999px;padding:10px 18px;font-family:var(--display);font-size:20px;display:inline-flex;gap:8px;align-items:center}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+/* ten frames */
+.tfs{display:flex;flex-direction:column;gap:8px;align-items:center}
+.tf{display:grid;grid-template-columns:repeat(5,44px);grid-auto-rows:44px;border:3px solid var(--ink);border-radius:6px;overflow:hidden}
+.tf span{border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center}
+.dot{width:30px;height:30px;border-radius:50%;display:block;transition:all .4s}
+.dot.a{background:var(--blue)}.dot.b{background:var(--sun)}
+/* number line */
+.nl{width:100%;max-width:560px;overflow-x:auto}
+.nl svg{display:block;width:100%;height:auto}
+/* doors */
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:460px}
+.door{border-radius:18px;padding:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--display);font-size:22px;border:3px solid transparent}
+.door small{font-family:var(--read);font-size:14px;color:var(--soft)}
+.door.o{background:var(--blue-t)}.door.c{background:var(--red-t)}
+.door.right{border-color:var(--leaf)}.door.wrong{border-color:var(--red);animation:shake .35s}
+/* spelling */
+.slots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.slot{width:46px;height:56px;border-bottom:4px solid var(--ink);font-family:var(--read);font-weight:700;font-size:36px;display:flex;align-items:flex-end;justify-content:center}
+.tiles-l{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:480px}
+.lt{width:56px;height:60px;border-radius:14px;background:var(--sun-t);font-family:var(--read);font-weight:700;font-size:32px;box-shadow:var(--shadow)}
+.lt:disabled{opacity:.25;box-shadow:none}
+.tool{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 14px;font-family:var(--display);font-size:18px}
+/* stickers */
+.book{background:var(--card);border-radius:24px;padding:18px;box-shadow:var(--shadow)}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:10px;margin-top:12px}
+.st{aspect-ratio:1;border-radius:50%;background:var(--sun-t);display:flex;align-items:center;justify-content:center;font-size:40px;border:3px dashed transparent}
+.st.empty{background:transparent;border-color:var(--line);font-size:18px;color:var(--soft);font-family:var(--display)}
+.st.new{animation:pop .6s}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+/* coloring */
+.cpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.cp{background:var(--card);border-radius:18px;padding:10px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--display);font-size:18px}
+.cp canvas{width:100%;max-width:120px;aspect-ratio:1;background:#fff;border-radius:10px}
+.cp.locked{opacity:.55}
+.canvaswrap{width:100%;max-width:520px;background:#fff;border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+.canvaswrap canvas{display:block;width:100%;height:auto;touch-action:none}
+.palette{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:520px}
+.sw{width:44px;height:44px;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 2px var(--line)}
+.sw.on{box-shadow:0 0 0 4px var(--ink)}
+.modes{display:flex;gap:8px}
+.mode.on{background:var(--ink);color:var(--bg)}
+/* reward */
+.reward{position:fixed;inset:0;background:rgba(20,26,43,.55);display:flex;align-items:center;justify-content:center;z-index:20;padding:20px}
+.rcard{background:var(--card);border-radius:28px;padding:26px;text-align:center;max-width:360px;width:100%;display:flex;flex-direction:column;gap:12px;align-items:center}
+.rcard .bigst{font-size:96px;animation:pop .7s}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+.parent{font-size:15px;color:var(--soft);line-height:1.5}
+.parent b{color:var(--ink)}
+.parent ul{margin:6px 0;padding-left:20px}
+.danger{background:var(--red-t);color:var(--ink);border-radius:12px;padding:8px 14px;font-family:var(--display)}
+.nameform{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.nameform input{font:inherit;font-size:24px;padding:10px 14px;border-radius:14px;border:3px solid var(--line);background:var(--bg);color:var(--ink);width:220px;-webkit-user-select:text;user-select:text}
+/* story time */
+.lvl{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;border-radius:10px;font-family:var(--display);font-size:20px;color:#fff;padding:0 8px}
+.lvl-I{background:#2f9e5b}.lvl-J{background:#3fa7b5}.lvl-K{background:#2f6fd6}.lvl-L{background:#7b5bd6}.lvl-M{background:#e0483d}
+.shelf{display:flex;flex-direction:column;gap:10px}
+.shelf-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bk{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow);text-align:left;flex:1 1 220px}
+.bk .bi{font-size:34px}.bk b{font-family:var(--display);font-size:19px;display:block}.bk small{color:var(--soft);font-size:14px}
+.bk.nextup{outline:3px solid var(--sun)}
+[hidden]{display:none!important}
+.story{background:var(--card);border-radius:24px;padding:20px 18px;box-shadow:var(--shadow);font-family:var(--read);font-size:clamp(21px,5.4vw,26px);line-height:1.9;text-align:left;-webkit-user-select:none}
+.story p{margin:0 0 14px}
+.w{border-radius:6px;padding:1px 1px;cursor:pointer}
+.w:active{background:var(--sun-t)}
+.w.tapped{text-decoration:underline dotted var(--grape) 3px;text-underline-offset:6px}
+.w.say{background:var(--sun);color:#1f2a44}
+.choices.one{grid-template-columns:1fr;max-width:520px}
+.choices.one .choice{font-size:21px;padding:14px 12px;font-family:var(--read);font-weight:700}
+/* sound-it-out sheet */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--card);border-radius:26px 26px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;align-items:center;animation:up .25s}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.sw-word{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;gap:14px;font-family:var(--read);font-weight:700;font-size:clamp(46px,13vw,72px);line-height:1.1}
+.syl{display:flex;border-bottom:5px solid var(--line);padding-bottom:2px}
+.ch{padding:0 2px;border-radius:10px;transition:background .15s,transform .15s}
+.ch.v{color:var(--red)}.ch.s{color:var(--soft);opacity:.55;font-size:.8em}.ch.suf{color:var(--blue)}
+.ch.lit{background:var(--sun);color:#1f2a44;transform:translateY(-4px)}
+.sw-word.all .ch{background:var(--sun-t)}
+.tipline{font-size:17px;color:var(--soft);text-align:center;max-width:36ch}
+.heartb{background:var(--red-t);border-radius:999px;padding:4px 12px;font-family:var(--display);font-size:16px}
+/* playing cards */
+.hand{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;min-height:96px}
+.lbl{font-family:var(--display);font-size:18px;color:var(--soft);margin-bottom:4px}
+.pcard{width:66px;height:94px;border-radius:10px;background:#fff;border:2px solid #1f2a44;display:flex;flex-direction:column;justify-content:space-between;padding:3px 7px;font-family:var(--display);font-size:22px;line-height:1;color:#1f2a44;box-shadow:var(--shadow);animation:pop .35s}
+.pcard.red{color:#d3302a}
+.pcard .mid{text-align:center;font-size:32px}
+.pcard .br{text-align:right;transform:rotate(180deg)}
+.pcard.back{background:repeating-linear-gradient(45deg,#7b5bd6 0 8px,#9b80e8 8px 16px)}
+/* make a problem */
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{background:var(--bg);border:3px solid var(--line);border-radius:16px;padding:8px 12px;font-family:var(--display);font-size:18px;display:flex;align-items:center;gap:6px}
+.chip.on{border-color:var(--blue);background:var(--blue-t)}
+.stepper{display:flex;align-items:center;gap:6px;justify-content:center}
+.stepper .n{font-family:var(--display);font-size:44px;min-width:72px;text-align:center;font-variant-numeric:tabular-nums}
+.stepper button{background:var(--sun-t);border-radius:12px;width:52px;height:48px;font-family:var(--display);font-size:20px;box-shadow:var(--shadow)}
+.mk-lbl{font-family:var(--display);font-size:20px}
+.preview{background:var(--sun-t);border-radius:16px;padding:14px 16px;font-size:22px;font-weight:700;line-height:1.35;max-width:30ch}
+.warn{color:var(--red);font-weight:700}
+.mk-text{font:inherit;font-size:18px;width:100%;max-width:460px;min-height:70px;padding:10px;border-radius:14px;border:3px solid var(--line);background:var(--bg);color:var(--ink);-webkit-user-select:text;user-select:text}
+.mylist{display:flex;flex-direction:column;gap:8px;width:100%;max-width:520px;text-align:left}
+.myitem{display:flex;gap:10px;align-items:center;background:var(--bg);border-radius:14px;padding:8px 12px;font-size:16px}
+.myitem span{flex:1}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:420px){.tf{grid-template-columns:repeat(5,38px);grid-auto-rows:38px}.dot{width:26px;height:26px}.choice{font-size:28px;padding:14px 6px}.lt{width:50px;height:56px}.slot{width:38px}}
+</style>
+</head><body>
+
+
+<div class="app" id="app"></div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ===== THIS WEEK'S CONTENT (updated weekly from the class sheets) ===== */
+const WEEK = {
+  label: "Week of Nov 10 · UFLI 66 & 67a · Math Unit 5",
+  open:   ["we","hi","go","me","he","she","no","be","so"],
+  closed: ["wet","him","got","met","red","hot","kick","stop","bed","not"],
+  compounds: [["sun","set"],["hot","dog"],["kick","ball"],["bath","tub"],["sand","box"],["up","hill"],["him","self"],["some","thing"],["camp","fire"],["step","dad"],["back","pack"],["hand","stand"]],
+  heart: [
+    {w:"friend", wrong:["frend","freind","frind"], s:"My ___ has to go home.", hint:"The heart part is <b>ie</b>: fr-ie-nd."},
+    {w:"because", wrong:["becuz","becaus","becose"], s:"I am happy ___ it is sunny.", hint:"The heart parts are <b>au</b> and <b>se</b>: bec-au-se."}
+  ],
+  spelling: [
+    ["sandbox","I did a handstand by the sandbox."],["sunset","We saw a pink sunset."],["uphill","The pup ran uphill."],
+    ["bathtub","The duck is in the bathtub."],["himself","He made it by himself."],["something","I see something in the grass."],
+    ["hotdog","Dad got a hotdog."],["kickball","We play kickball at recess."],["friend","My friend has to go home."],
+    ["because","I smile because I am happy."],["she","She has a red kite."],["got","I got a fish."],["wet","The dog is wet."],["red","The ladybug is red."]
+  ]
+};
+
+/* ===== REVIEW: earlier weeks, mixed in so older skills stay fresh =====
+   Oct 19–23: UFLI 63 (-es), Math Unit 4 word problems
+   Nov 2–6:   UFLI 64 (-ed), UFLI 65 (-ing), comparison problems
+   Spelling Bee: Scripps One Bee second-grade list (50 words) */
+const REVIEW = {
+  label: "UFLI 63–65 (-es, -ed, -ing) · Math Unit 4 story problems · Spelling Bee words",
+  es: [["fox","foxes"],["box","boxes"],["dish","dishes"],["lunch","lunches"],["glass","glasses"],["dress","dresses"],["bench","benches"],["brush","brushes"],["bunch","bunches"],["peach","peaches"],["wish","wishes"],["bus","buses"]],
+  s:  [["cat","cats"],["dog","dogs"],["frog","frogs"],["bug","bugs"],["kite","kites"],["duck","ducks"],["hat","hats"],["pig","pigs"],["shell","shells"],["nest","nests"]],
+  endings: [ // past = "yesterday" sentence (-ed), now = "is/are" sentence (-ing)
+    {b:"yell", ed:"yelled", ing:"yelling", s:"yells", past:"Last night the goat ___ for its mom.", now:"The goat is ___ for its mom."},
+    {b:"pull", ed:"pulled", ing:"pulling", s:"pulls", past:"Yesterday the horse ___ the cart.", now:"The horse is ___ the cart."},
+    {b:"fix", ed:"fixed", ing:"fixing", s:"fixes", past:"Yesterday she ___ many of the kites.", now:"She is ___ the kite."},
+    {b:"pick", ed:"picked", ing:"picking", s:"picks", past:"Last week we ___ apples.", now:"We are ___ apples."},
+    {b:"rest", ed:"rested", ing:"resting", s:"rests", past:"Yesterday the lion ___ in the shade.", now:"The lion is ___ in the shade."},
+    {b:"fill", ed:"filled", ing:"filling", s:"fills", past:"Yesterday Mom ___ the dog bowl.", now:"Mom is ___ the dog bowl."},
+    {b:"call", ed:"called", ing:"calling", s:"calls", past:"Last night the owl ___ to its friend.", now:"The owl is ___ to its friend."},
+    {b:"wish", ed:"wished", ing:"wishing", s:"wishes", past:"Yesterday I ___ for a puppy.", now:"I am ___ on a star."},
+    {b:"ask", ed:"asked", ing:"asking", s:"asks", past:"Yesterday Kit ___ to play.", now:"Kit is ___ to play."},
+    {b:"jump", ed:"jumped", ing:"jumping", s:"jumps", past:"Yesterday the frog ___ into the pond.", now:"The frog is ___ into the pond."},
+    {b:"kick", ed:"kicked", ing:"kicking", s:"kicks", past:"Yesterday Max ___ the ball.", now:"Max is ___ the ball."},
+    {b:"help", ed:"helped", ing:"helping", s:"helps", past:"Yesterday I ___ feed the fish.", now:"I am ___ feed the fish."},
+    {b:"block", ed:"blocked", ing:"blocking", s:"blocks", past:"Yesterday the dog ___ the door.", now:"The dog is ___ the door."},
+    {b:"fish", ed:"fished", ing:"fishing", s:"fishes", past:"Last week the bear ___ in the river.", now:"The bear is ___ in the river."},
+    {b:"sing", ing:"singing", s:"sings", now:"The bird is ___ in the tree."},
+    {b:"think", ing:"thinking", s:"thinks", now:"The cat is ___ about fish."},
+    {b:"stand", ing:"standing", s:"stands", now:"The flamingo is ___ on one leg."},
+    {b:"send", ing:"sending", s:"sends", now:"I am ___ a card to Nana."}
+  ],
+  heart: [
+    {w:"any", wrong:["eny","ene","enny"], s:"Is there ___ milk left?", hint:"The heart part is <b>a</b>. It sounds like /e/: a-ny."},
+    {w:"many", wrong:["meny","mene","menny"], s:"She fixed ___ of the kites.", hint:"The heart part is <b>a</b>. It sounds like /e/: ma-ny."},
+    {w:"been", wrong:["bin","ben","benn"], s:"Have you ___ camping?", hint:"The heart part is <b>ee</b>. It sounds like /i/: b-ee-n."},
+    {w:"into", wrong:["intu","intoo","entu"], s:"He is lifting the box ___ the trunk.", hint:"The heart part is <b>o</b>. It sounds like /oo/: in-to."}
+  ],
+  spelling: [
+    ["yelled","The goat yelled for its mom."],["pulled","The horse pulled the cart."],["fixed","She fixed the kite."],["picked","We picked apples."],
+    ["rested","The lion rested in the shade."],["filled","Mom filled the dog bowl."],["wished","I wished for a puppy."],
+    ["asking","Kit is asking to play."],["sending","I am sending a card."],["fishing","The bear is fishing."],["singing","The bird is singing."],
+    ["helping","I am helping Dad."],["standing","The flamingo is standing on one leg."],["foxes","Two foxes ran by."],["dishes","I help wash the dishes."],
+    ["lunches","We packed our lunches."],["any","Is there any milk left?"],["many","I see many ducks."],["been","Have you been camping?"],["into","The frog jumped into the pond."]
+  ],
+  bee: [
+    ["chips","We had chips with lunch."],["beans","The farmer planted beans."],["mouth","The hippo opened its big mouth."],["spray","The whale let out a spray of water."],
+    ["year","My birthday comes once a year."],["truth","Always tell the truth."],["paper","I drew a cat on the paper."],["rabbit","The rabbit hopped into the garden."],
+    ["feed","Let's feed the ducks."],["tallest","The giraffe is the tallest animal."],["inside","The puppy sleeps inside the house."],["frozen","The pond is frozen in winter."],
+    ["speak","Can your parrot speak?"],["cliffs","Goats climb on the rocky cliffs."],["whale","A blue whale is very big."],["market","We bought apples at the market."],
+    ["flock","A flock of birds flew south."],["crunch","The leaves crunch under my feet."],["lizard","The lizard sat in the sun."],["beware","Beware of the grumpy goose!"],
+    ["sparkle","The stars sparkle at night."],["sweater","Wear your warm sweater."],["nurse","The nurse helped me feel better."],["wrong","Oops, that is the wrong way."],
+    ["hopped","The frog hopped onto the log."],["money","I saved my money in a jar."],["cabin","We stayed in a cabin in the woods."],["darkness","Owls can see in the darkness."],
+    ["always","My cat always naps after lunch."],["sprout","A seed will sprout in the spring."],["carve","We carve a pumpkin in the fall."],["shadows","The trees make long shadows."],
+    ["morning","The rooster crows in the morning."],["alive","The plant is alive and green."],["earth","We live on the planet Earth."],["friend","My friend has to go home."],
+    ["lovely","What a lovely butterfly!"],["return","Please return your library book."],["half","I ate half of the sandwich."],["swift","The swift fox ran away."],
+    ["grandfather","My grandfather tells funny stories."],["footprints","The bear left footprints in the snow."],["fear","The kitten has no fear of the dog."],["thirsty","The thirsty horse drank water."],
+    ["peer","Peer into the fish tank."],["gentle","Be gentle with the baby bird."],["riddle","Can you solve the riddle?"],["voice","Use your quiet voice."],
+    ["peach","The peach is sweet and juicy."],["pancakes","We had pancakes for breakfast."]
+  ]
+};
+
+/* ===== STORY TIME: leveled passages (written for levels I–M; levels are estimates) ===== */
+const STORIES = [
+ {id:"i1", lvl:"I", ico:"🌈", title:"The Rainbow Paint", text:[
+  `Lily had a box of paint. She had red, blue, and yellow.`,
+  `"I want to paint a rainbow," said Lily. "But I need more colors."`,
+  `Her mom smiled. "Mix them," she said.`,
+  `Lily mixed red and yellow. She got orange! She mixed yellow and blue. She got green! Then she mixed red and blue. She got purple!`,
+  `Lily painted a big rainbow on her paper. It had red, orange, yellow, green, blue, and purple.`,
+  `"Look!" said Lily. "I made all the colors from just three."`,
+  `She hung the rainbow on the wall. Every time she saw it, she smiled.`],
+  qs:[["What three colors did Lily start with?","red, blue, and yellow",["green, orange, and purple","pink, white, and black"]],
+      ["What color did Lily get when she mixed yellow and blue?","green",["orange","purple"]],
+      ["Where did Lily hang her rainbow?","on the wall",["on the door","in her room's window"]]]},
+ {id:"i2", lvl:"I", ico:"🏀", title:"Max Wants to Play", text:[
+  `Max is a big brown dog. Max likes to play ball.`,
+  `Ava has a basketball. She bounces it in the driveway. Bounce, bounce, bounce.`,
+  `Max runs to Ava. He jumps up and barks. "Woof! Woof!"`,
+  `"This ball is too big for you, Max," said Ava.`,
+  `Max sits down. He looks sad.`,
+  `Ava gets a small red ball from the box. She throws it across the yard. Max runs fast. He picks up the ball and brings it back.`,
+  `"Good dog!" said Ava.`,
+  `Ava shoots her basketball at the hoop. Swish! It goes in. Max drops his red ball at her feet. Now they can both play.`],
+  qs:[["Why can't Max play with the basketball?","It is too big for him.",["It is flat.","Ava will not share."]],
+      ["What does Ava give Max?","a small red ball",["a bone","a basketball"]],
+      ["What happens when Ava shoots her basketball?","It goes in the hoop.",["It hits the dog.","It rolls away."]]]},
+ {id:"j1", lvl:"J", ico:"👗", title:"The Lost Doll Shoe", text:[
+  `Emma had a doll named Ruby. Ruby had brown hair, a blue dress, and two shiny black shoes.`,
+  `One morning, Emma could only find one shoe.`,
+  `"Oh no!" said Emma. "Where is Ruby's other shoe?"`,
+  `She looked under her bed. She found a sock and a crayon, but no shoe. She looked in her toy box. She found a puzzle piece and a hair bow, but no shoe.`,
+  `Then Emma heard a sound in the hall. It was her kitten, Pepper. Pepper was batting something across the floor.`,
+  `Emma got down on her knees to look. It was the little black shoe!`,
+  `"Pepper, you found it!" Emma laughed. "But that is not a cat toy."`,
+  `She put the shoe back on Ruby's foot. Then she gave Pepper a ball of yarn to play with instead. Now everyone was happy.`],
+  qs:[["What was missing?","one of Ruby's shoes",["Ruby's blue dress","Emma's crayon"]],
+      ["Who had the shoe?","Pepper the kitten",["Emma's mom","the dog"]],
+      ["What did Emma give Pepper to play with instead?","a ball of yarn",["a sock","a puzzle piece"]]]},
+ {id:"j2", lvl:"J", ico:"🦇", title:"Into the Cave", text:[
+  `Our class went on a trip to a cave. The bus ride was long, but we sang songs the whole way.`,
+  `At the cave, a guide met us at the door. She had a flashlight and a big smile.`,
+  `"Stay close," she said. "It is dark inside, and the floor is wet."`,
+  `We walked into the cave. The air felt cold, so I zipped up my jacket.`,
+  `The guide pointed her light at the ceiling. Long, pointy rocks hung down like icicles.`,
+  `"Those are called stalactites," she said. "They grow one tiny drip at a time."`,
+  `Then she turned off her light. It was so dark that I could not see my hand! Everyone was quiet. Then we heard drip, drip, drip.`,
+  `When the light came back on, we all cheered. That night I told my family all about the dark, drippy cave.`],
+  qs:[["Why did the girl zip up her jacket?","The cave was cold.",["It was raining.","She was going home."]],
+      ["What hangs down from the cave ceiling?","stalactites",["bats","flashlights"]],
+      ["What did the class hear when the light was off?","drip, drip, drip",["a bat flying","the bus"]]]},
+ {id:"k1", lvl:"K", ico:"🦄", title:"Sparkle Learns to Fly", text:[
+  `High on a hill, in a meadow full of flowers, lived a young unicorn named Sparkle. Sparkle had a white coat, a purple mane, and a horn that shimmered in the sun.`,
+  `All the older unicorns could fly. Every morning they lifted into the sky and raced over the rainbow. Sparkle wanted to fly with them more than anything.`,
+  `"Just flap your wings and jump," said her big brother, Thunder.`,
+  `Sparkle flapped and jumped. She landed in a patch of daisies with a thump. She tried again the next day, and the next. Each time, she went a little higher before she came down.`,
+  `"I will never fly," Sparkle sighed.`,
+  `Her grandmother trotted over. "Do you remember when you could not gallop?" she asked. "You practiced, and now you are the fastest runner in the meadow."`,
+  `Sparkle thought about that. The next morning, she ran as fast as she could, spread her wings wide, and jumped.`,
+  `This time, she did not come down. The wind lifted her up, up, up, until she was gliding over the rainbow with Thunder.`,
+  `"I did it!" she shouted. "I just had to keep trying!"`],
+  qs:[["What did Sparkle want to do?","fly with the older unicorns",["find a rainbow","win a race"]],
+      ["How did Grandmother help Sparkle?","She reminded her that practice helped her learn to gallop.",["She gave Sparkle new wings.","She carried Sparkle into the sky."]],
+      ["What is the lesson of the story?","Keep trying, even when it is hard.",["Unicorns can't fly.","Always stay in the meadow."]]]},
+ {id:"k2", lvl:"K", ico:"🌻", title:"The Garden Surprise", text:[
+  `In the spring, Grandpa gave Mia a packet of seeds. The picture on the front showed a tall yellow flower with a big brown center.`,
+  `"These are sunflowers," said Grandpa. "If you take care of them, they will grow taller than you."`,
+  `Mia did not believe him. The seeds were smaller than her fingernail!`,
+  `Together they dug little holes in the garden and dropped in the seeds. Mia patted the dirt on top and watered them with her pink watering can.`,
+  `For a week, nothing happened. Mia checked every morning before school. Then one day she saw tiny green sprouts poking out of the ground.`,
+  `All summer, Mia watered her plants. They grew past her knees, then past her waist, then past her head. By the end of July, the sunflowers were so tall that Mia had to tip her head back to see them.`,
+  `Bees buzzed around the yellow petals. Birds came to eat the seeds.`,
+  `"You were right, Grandpa," Mia said. "They are taller than me. They might even be taller than you!"`],
+  qs:[["What did the seeds grow into?","sunflowers",["roses","pumpkins"]],
+      ["Why did Mia not believe Grandpa at first?","The seeds were so tiny.",["The seeds were blue.","It was too cold."]],
+      ["What came to visit the sunflowers?","bees and birds",["bunnies and deer","cats and dogs"]]]},
+ {id:"l1", lvl:"L", ico:"🃏", title:"The Card Shark", text:[
+  `Every Friday night, Nora played cards with her grandmother. Their favorite game was gin rummy.`,
+  `For weeks, Grandma won almost every game. She would lay down her cards, smile, and say, "Gin!" Nora would groan and count up the points she had lost.`,
+  `"How do you always win?" Nora asked one night.`,
+  `Grandma shuffled the deck slowly. "I watch," she said. "I pay attention to the cards you pick up and the cards you throw away. If you pick up a seven of hearts, I know you might be collecting sevens. So I keep my sevens."`,
+  `Nora thought about that all week. The next Friday, she watched every card Grandma touched. When Grandma picked up the queen of spades, Nora held on to her own queens. When Grandma threw away a three, Nora knew she was not saving threes.`,
+  `Slowly, Nora's hand came together. She had three kings, three twos, and a run of the four, five, six, and seven of diamonds.`,
+  `Nora took a deep breath. She laid down her cards and said, "Gin!"`,
+  `Grandma's eyes grew wide. Then she laughed and clapped her hands. "Well, look at that," she said. "I think I have created a card shark."`,
+  `Nora grinned. "Same time next week?"`,
+  `"I wouldn't miss it," said Grandma.`],
+  qs:[["What was Grandma's secret for winning?","She watched the cards Nora picked up and threw away.",["She hid extra cards.","She always went first."]],
+      ["Grandma picked up the queen of spades. What did Nora do?","She kept her own queens.",["She threw away her queens.","She said, \"Gin!\""]],
+      ["In this story, what is a \"card shark\"?","a very good card player",["a fish in the ocean","a card with a shark on it"]]]},
+ {id:"l2", lvl:"L", ico:"🧵", title:"Ana's Ancestor Doll", text:[
+  `Ana's class was learning about how people from many places made America their home. For homework, each student had to make an ancestor doll.`,
+  `"What's an ancestor?" Ana asked her dad at dinner.`,
+  `"An ancestor is someone in your family who lived a long time ago," Dad said. "Like your great-great-grandmother, Rosa."`,
+  `Dad pulled an old photo album from the shelf. On one page was a picture of a young woman standing beside a ship. She wore a long skirt and held a small suitcase.`,
+  `"Rosa came to America on a ship when she was sixteen," Dad explained. "She didn't speak English yet. She worked in a bakery and learned new words every day from the customers."`,
+  `"What did she bake?" Ana asked.`,
+  `Dad smiled. "Bread with a sweet, crunchy crust. Grandma still makes it with Rosa's recipe."`,
+  `Ana knew exactly who her doll would be. She used cloth for the long skirt, yarn for Rosa's dark braids, and a tiny piece of cardboard for the suitcase. She even drew a loaf of bread to put in the doll's hand.`,
+  `When Ana presented her doll, she told the class Rosa's story. "She was brave," Ana said, "and because of her, my family has a home here."`,
+  `Afterward, Ana's grandmother baked Rosa's bread for the whole class.`],
+  qs:[["What is an ancestor?","someone in your family who lived long ago",["a new baby in the family","a teacher at school"]],
+      ["What job did Rosa have in America?","She worked in a bakery.",["She drove a ship.","She made dolls."]],
+      ["What did Ana use to make Rosa's braids?","yarn",["paper","bread"]]]},
+ {id:"m1", lvl:"M", ico:"🏆", title:"The Big Game", text:[
+  `Jada had been practicing her free throws for weeks. Every afternoon after school, she stood at the line in her driveway, bent her knees, and shot the ball toward the hoop. Some days, most of her shots bounced off the rim. Other days, they dropped through the net with a perfect swish.`,
+  `On Saturday, her team, the Lightning, played their biggest game of the season against the Comets. The gym was packed. Jada could hear her little brother cheering from the bleachers.`,
+  `The game was close the whole time. When one team scored, the other team scored right back. With ten seconds left, the Comets were ahead by one point.`,
+  `Jada dribbled down the court. As she went up for a shot, a Comets player bumped her arm. The referee blew the whistle. "Foul!" he called. "Two free throws."`,
+  `Jada walked slowly to the line. Her heart was pounding so hard she was sure everyone could hear it. She looked up at the crowd, and then she remembered her driveway. Bend your knees. Eyes on the rim. Follow through.`,
+  `She took a deep breath and shot. Swish! The game was tied.`,
+  `The gym grew quiet as she shot again. The ball rolled around the rim and dropped in. The buzzer sounded. The Lightning had won by one point!`,
+  `Her teammates rushed onto the court and lifted her up. Later, her coach asked how she had stayed so calm.`,
+  `Jada smiled. "I just pretended I was back in my driveway," she said. "I had already made that shot a hundred times."`],
+  qs:[["Why did Jada get two free throws?","A player bumped her arm.",["She scored a basket.","Time ran out."]],
+      ["What happened after Jada's first free throw went in?","The game was tied.",["The Comets won.","The buzzer sounded."]],
+      ["How did Jada stay calm?","She pretended she was practicing in her driveway.",["She closed her eyes.","Her coach took the shot."]]]},
+ {id:"m2", lvl:"M", ico:"🌦️", title:"How Does a Rainbow Form?", text:[
+  `Have you ever noticed that rainbows usually appear right after a rainstorm? That is not an accident. To make a rainbow, you need two things: sunlight and drops of water.`,
+  `Sunlight looks white, but it is really made of many colors mixed together. When sunlight shines into a raindrop, the light bends. Each color bends a slightly different amount, so the colors spread apart, like runners spreading out during a race. Then the light bounces off the back of the raindrop and comes back out toward your eyes.`,
+  `Millions of raindrops do this at the same time. Together, they paint a giant arc of color across the sky.`,
+  `The colors of a rainbow always appear in the same order: red, orange, yellow, green, blue, indigo, and violet. Some people remember the order with a made-up name, Roy G. Biv. Each letter stands for one of the colors.`,
+  `Here is a surprising fact: to see a rainbow, the sun must be behind you. If you face the sun, you will not see one. The next time it rains and the sun peeks out, turn your back to the sun and look up. You might spot a rainbow!`,
+  `You can even make your own. On a sunny day, stand with your back to the sun and spray a fine mist from a garden hose. Look closely at the mist, and a small rainbow may appear right in front of you.`,
+  `Rainbows may look like magic, but they are really science.`],
+  qs:[["What two things do you need to make a rainbow?","sunlight and drops of water",["clouds and wind","snow and moonlight"]],
+      ["Where must the sun be for you to see a rainbow?","behind you",["in front of you","right above you"]],
+      ["What does \"Roy G. Biv\" help you remember?","the order of the rainbow's colors",["the name of a scientist","how rain is made"]]]},
+];
+
+/* Look to the End: words that start the same way, so she has to read all the way through */
+const SAME_START = [
+  ["horse","house","hose","home"],["stop","step","stomp","stamp"],["black","block","blank","blink"],["chip","chop","chin","chimp"],
+  ["train","trail","trap","track"],["plant","plan","plane","planet"],["frog","from","front","frost"],["think","thank","thing","thin"],
+  ["bring","brick","brim","bright"],["crab","crack","crash","cram"],["spin","spill","spot","spring"],["flower","floor","flow","flock"],
+  ["grass","grab","grand","grape"],["star","start","stair","stare"],["clap","class","clam","clock"],["friend","fried","fries","fresh"],
+  ["before","behind","began","because"],["were","where","when","went"],["there","three","these","then"],["what","when","where","which"],
+  ["jump","jumped","jumping","jumps"],["play","played","playing","plays"],["fish","fished","fishing","fishes"],["hop","hope","hopped","hoping"],
+  ["tap","tape","tapped","taped"],["kit","kite","kitten","kitchen"],["sun","sunny","sunset","sunflower"],["rain","rainbow","raining","raindrop"],
+  ["unicorn","uniform","until","under"],["basket","basketball","bask","bash"]
+];
+const HEART_WORDS = new Set("the a said was of to you your they were are what who where there their some come one once do does done have give live love other mother brother father from into any many been friend because again could would should put two says want water very eye eyes".split(" "));
+
+/* ===== word chunker: letter-sound chunks + syllables, for "sound it out" ===== */
+const OVR={stalactites:"sta|lac|tites",suitcase:"suit|case",teammates:"team|mates",bakery:"ba|ke|ry",driveway:"drive|way",everyone:"ev|ery|one",
+  lightning:"light|ning",fingernail:"fin|ger|nail",afterward:"af|ter|ward",sometimes:"some|times",hundred:"hun|dred",even:"e|ven",over:"o|ver",ava:"a|va",
+  instead:"in|stead",anything:"any|thing",something:"some|thing",someone:"some|one",homework:"home|work",rainstorm:"rain|storm",story:"sto|ry",
+  favorite:"fa|vor|ite",color:"col|or",colors:"col|ors",exactly:"ex|act|ly",slightly:"slight|ly",closely:"close|ly",science:"sci|ence",magic:"mag|ic",
+  planet:"plan|et",petals:"pet|als",seconds:"sec|onds",toward:"to|ward",people:"peo|ple",every:"ev|er|y",comets:"com|ets",recipe:"rec|i|pe",
+  customers:"cus|tom|ers",english:"eng|lish",different:"dif|fer|ent",family:"fam|i|ly",seven:"sev|en",sevens:"sev|ens",never:"nev|er",ever:"ev|er",
+  lily:"lil|y",saturday:"sat|ur|day",sunflower:"sun|flow|er",sunflowers:"sun|flow|ers",flower:"flow|er",flowers:"flow|ers",unicorns:"u|ni|corns"};
+const GR=["eigh","tion","tch","dge","igh","air","ear","sh","ch","th","wh","ph","ck","ng","nk","qu","kn","wr","ee","ea","oa","ai","ay","oo","ou","ow","oi","oy","oe","ui","ei","ar","or","er","ir","ur","aw","au","ew","ey","ie","ue"];
+const DBL=["ll","ss","ff","zz"], RCTRL=/^(ar|or|er|ir|ur|aw|ew)$/, CLOSED=/^(x|v|ck|tch|sh|ch|th|ng|nk|dge)$/;
+const isV=(c)=>/[aeiou]/.test(c);
+function chunkWord(word){
+  const ov=OVR[word.toLowerCase()];
+  if(ov){ let pos=0; return ov.split("|").map(part=>{ const seg=word.substr(pos,part.length); pos+=part.length; return chunkWord_(seg).flat(); }); }
+  return chunkWord_(word);
+}
+function chunkWord_(word){
+  const w=word.toLowerCase().replace(/’/g,"'"); const out=[]; let i=0;
+  const sufIng = w.length>4 && w.endsWith("ing");
+  const sufEd = w.length>=4 && w.endsWith("ed") && /[aeiouy]/.test(w.slice(0,-2)) && !/eed$/.test(w);
+  const stop = sufIng? w.length-3 : sufEd? w.length-2 : w.length;
+  while(i<stop){ let g=null;
+    for(const p of GR){ if(w.startsWith(p,i) && i+p.length<=stop){ if(RCTRL.test(p) && i+2<w.length && isV(w[i+2])) continue; g=p; break; } }
+    if(!g){ for(const p of DBL){ if(w.startsWith(p,i) && i+2===stop){ g=p; break; } } }
+    if(!g) g=w[i];
+    out.push({t:word.substr(i,g.length), g}); i+=g.length; }
+  if(sufIng) out.push({t:word.substr(stop),g:"ing",suf:1}); if(sufEd) out.push({t:word.substr(stop),g:"ed",suf:1});
+  out.forEach((c,k)=>{ c.v = c.g!=="qu" && c.g!=="'" && (/[aeiou]/.test(c.g) || (c.g==="y" && k>0)); });
+  const n=out.length; const base = out.filter(c=>!c.suf).length; // chunks before any suffix
+  // silent final e (or e before final s): there must be an earlier vowel
+  let ei=-1; if(base>=2 && out[base-1].g==="e") ei=base-1;
+  else if(base>=3 && out[base-1].g==="s" && out[base-2].g==="e" && !/^(s|x|z|ch|sh|c|g|ss)$/.test(out[base-3].g)) ei=base-2;
+  if(ei>0 && out.slice(0,ei).some(c=>c.v)){
+    if(out[ei-1].g==="l" && ei>=2 && !out[ei-2].v){ out[ei].le=1; } // consonant-le says "ul"
+    else { out[ei].silent=1; out[ei].v=false; const c1=out[ei-1], v1=out[ei-2]; if(c1 && !c1.v && v1 && v1.v && v1.g.length===1) v1.magic=1; }
+  }
+  // syllables
+  const ed = sufEd ? n-1 : -1, edSyl = ed>0 && /[td]$/.test(out[ed-1].g);
+  const vowels = out.map((c,k)=>c.v?k:-1).filter(k=>k>=0 && !(k===ed && !edSyl));
+  let syl=[], start=0;
+  for(let a=0;a<vowels.length-1;a++){
+    const v=vowels[a], nv=vowels[a+1]; const cons=nv-v-1; let cut;
+    if(out[nv].g==="tion") cut=nv;
+    else if(out[nv].suf) cut = (nv>=2 && out[nv-1].g===out[nv-2].g && out[nv-1].g.length===1 && !out[nv-1].v) ? nv-1 : nv;
+    else if(cons===0) cut=nv;
+    else if(cons===1) cut = (out[v].g.length===1 && !out[v].magic && CLOSED.test(out[v+1].g)) ? v+2 : v+1;
+    else if(cons===2) cut = (/^[bcdfgkpt]$/.test(out[v+1].g) && /^[rl]$/.test(out[v+2].g)) ? v+1 : v+2;
+    else cut = (/^[rl]$/.test(out[nv-1].g) && /^[bcdfgkpt]$/.test(out[nv-2].g)) ? nv-2 : nv-1;
+    if(out[nv].le && nv-2>v) cut=nv-2; // pur·ple, lit·tle
+    syl.push(out.slice(start,cut)); start=cut;
+  }
+  syl.push(out.slice(start));
+  return syl.filter(s=>s.length);
+}
+
+/* ===== storage =====
+   One shared family copy of her progress (a shared family record) for everyone signed in with write access,
+   browser storage on every device, and a typed "progress code" to carry progress to devices that can't sign in.
+   Stars and rounds are counted per device and added up, so merging copies never double-counts or loses any. */
+const DEFAULT = {name:"", stars:0, streak:0, lastDay:"", stickers:[], rounds:0, mine:[], mineAt:0, readDone:{}, tricky:{}, dev:null, epoch:0};
+let DEV = "0"; try{ DEV = localStorage.getItem("llab-dev") || ""; if(!DEV){ DEV = String(1+Math.floor(Math.random()*255)); localStorage.setItem("llab-dev",DEV); } }catch(e){ DEV=String(1+Math.floor(Math.random()*255)); }
+const dnum=(s)=>{ if(!s) return 0; const [y,m,d]=String(s).split("-").map(Number); return Math.round(Date.UTC(y,(m||1)-1,d||1)/864e5); };
+const dstr=(n)=>{ const d=new Date(n*864e5); return d.getUTCFullYear()+"-"+(d.getUTCMonth()+1)+"-"+d.getUTCDate(); };
+function totals(st){ st.stars=0; st.rounds=0; for(const d of Object.values(st.dev)){ st.stars+=d.s||0; st.rounds+=d.r||0; } return st; }
+function norm(x){ const st={...DEFAULT, ...(x||{})}; st.stickers=[...(st.stickers||[])]; st.mine=[...(st.mine||[])]; st.readDone={...(st.readDone||{})}; st.tricky={...(st.tricky||{})};
+  st.dev = st.dev ? JSON.parse(JSON.stringify(st.dev)) : {"0":{s:st.stars||0, r:st.rounds||0}}; return totals(st); }
+function mergeState(x,y){
+  const a=norm(x), b=norm(y);
+  if((a.epoch||0)!==(b.epoch||0)) return (a.epoch||0)>(b.epoch||0) ? a : b; // a reset wins over older progress
+  const n = dnum(a.lastDay)>=dnum(b.lastDay) ? a : b, o = n===a ? b : a;
+  const dev={}; for(const k of new Set([...Object.keys(a.dev),...Object.keys(b.dev)])){ const p=a.dev[k]||{}, q=b.dev[k]||{}; dev[k]={s:Math.max(p.s||0,q.s||0), r:Math.max(p.r||0,q.r||0)}; }
+  const tricky={...o.tricky}; for(const [k,v] of Object.entries(n.tricky)) tricky[k]=Math.max(v,tricky[k]||0);
+  const mineSide = (a.mineAt||0)>=(b.mineAt||0) ? a : b;
+  return totals({...o, ...n, name:n.name||o.name, dev, tricky, readDone:{...o.readDone,...n.readDone},
+    stickers:[...o.stickers.filter(x=>!n.stickers.includes(x)), ...n.stickers],
+    streak: (()=>{ const gap=dnum(n.lastDay)-dnum(o.lastDay); return gap===0 ? Math.max(a.streak,b.streak) : gap===1 && o.lastDay ? Math.max(n.streak,(o.streak||0)+1) : n.streak; })(), lastDay:n.lastDay,
+    mine:mineSide.mine, mineAt:Math.max(a.mineAt||0,b.mineAt||0), epoch:a.epoch||0});
+}
+let S = norm(null); let famRef=null, canWrite=false, syncNote="Saved on this device only.";
+function persistLocal(){ try{ localStorage.setItem("llab", JSON.stringify(S)); }catch(e){} }
+function pushFamily(){ if(!famRef||!canWrite) return; clearTimeout(pushFamily.t); pushFamily.t=setTimeout(()=>{ famRef.set(JSON.parse(JSON.stringify(S))).catch(()=>{ canWrite=false; syncNote="Couldn't save to the family copy. Progress is saved on this device."; }); },700); }
+function save(){ totals(S); persistLocal(); pushFamily(); pushWeb(); }
+function myDev(){ return S.dev[DEV] || (S.dev[DEV]={s:0,r:0}); }
+function refreshAfterSync(){ updatePills(); if(["home","stickers","color","library"].includes(view)) render(); }
+try{ const v=JSON.parse(localStorage.getItem("llab")||"null"); if(v) S=norm(v); }catch(e){}
+const KID = (window.LL_CONFIG && window.LL_CONFIG.supabaseUrl) ? "kid1" : "kid1";
+/* --- sync inside Claude (artifact): shared db doc --- */
+async function startClaudeSync(){
+  try{
+    const db = await window.claude?.use?.("db"); const user = await window.claude?.use?.("user");
+    if(!db) return;
+    const w = user ? await user.can("data.write") : null; canWrite = w!==false;
+    try{ const id = user ? await user.id() : null; if(id){ const old = await db.doc("data/users/"+id+"/ladybuglab").get(); if(old.exists) S = mergeState(S, old.data()); } }catch(e){}
+    famRef = db.doc("family/"+KID);
+    syncNote = canWrite ? "Syncing with the family copy. Every signed-in grown-up with edit access shares these stats." : "You can see the family copy but not save to it. Ask the owner to make you an Editor. Progress here is saved on this device.";
+    famRef.onSnapshot(snap=>{
+      const remote = snap.exists ? snap.data() : null;
+      const merged = remote ? mergeState(S, remote) : S;
+      const changed = JSON.stringify(merged)!==JSON.stringify(S);
+      S = merged; persistLocal(); if(changed) refreshAfterSync();
+      if(!remote || JSON.stringify(norm(remote))!==JSON.stringify(S)) pushFamily();
+    }, ()=>{ syncNote="Lost touch with the family copy. Progress is saved on this device."; });
+  }catch(e){}
+}
+/* --- sync on the standalone website: Supabase + family code --- */
+const WEB = window.LL_CONFIG && window.LL_CONFIG.supabaseUrl ? window.LL_CONFIG : null;
+let FAMILY = "", webVer = 0, webBusy = false, webDirty = false;
+const cleanFam = (c)=> String(c||"").toUpperCase().replace(/[^0-9A-Z]/g,"").replace(/[IL]/g,"1").replace(/O/g,"0").replace(/U/g,"V");
+function readFamilyFromURL(){ const m=location.hash.match(/family=([0-9A-Za-z-]+)/); return m? cleanFam(m[1]) : ""; }
+function familyLink(){ return location.origin+location.pathname+"#family="+FAMILY.match(/.{1,4}/g).join("-"); }
+function newFamilyCode(){ const r=new Uint8Array(20); crypto.getRandomValues(r); return Array.from(r,x=>B32[x%32]).join(""); }
+async function rpc(fn,args){
+  const r = await fetch(WEB.supabaseUrl.replace(/\/$/,"")+"/rest/v1/rpc/"+fn, {method:"POST", headers:{apikey:WEB.supabaseKey, Authorization:"Bearer "+WEB.supabaseKey, "Content-Type":"application/json"}, body:JSON.stringify(args)});
+  if(!r.ok) throw new Error("sync "+r.status); return r.json();
+}
+async function webPull(){
+  const rows = await rpc("get_progress",{p_code:FAMILY, p_kid:KID});
+  if(rows.length){ webVer = rows[0].r_version; const m=mergeState(S, rows[0].r_data); const changed=JSON.stringify(m)!==JSON.stringify(S); S=m; persistLocal(); if(changed) refreshAfterSync();
+    return JSON.stringify(norm(rows[0].r_data))!==JSON.stringify(S); }
+  webVer = 0; return true;
+}
+async function webPush(){
+  for(let i=0;i<4;i++){
+    const [res] = await rpc("save_progress",{p_code:FAMILY, p_kid:KID, p_data:JSON.parse(JSON.stringify(S)), p_version:webVer});
+    if(res.r_ok){ webVer=res.r_version; return; }
+    webVer=res.r_version; if(res.r_data){ S=mergeState(S,res.r_data); persistLocal(); refreshAfterSync(); }
+  }
+}
+async function webSync(){
+  if(!FAMILY) return; if(webBusy){ webDirty=true; return; } webBusy=true;
+  try{ const need = await webPull(); if(need || webDirty){ webDirty=false; await webPush(); } syncNote="Synced with your family. Last checked "+new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})+"."; }
+  catch(e){ syncNote="Can't reach family sync right now. Progress is saved on this device and will sync later."; }
+  webBusy=false; if(webDirty){ webDirty=false; setTimeout(webSync,500); }
+}
+function startWebSync(){
+  try{ FAMILY = readFamilyFromURL() || cleanFam(localStorage.getItem("llab-family")); }catch(e){ FAMILY = readFamilyFromURL(); }
+  if(FAMILY){ try{ localStorage.setItem("llab-family",FAMILY); }catch(e){} }
+  syncNote = FAMILY ? "Connecting to family sync…" : "Family sync isn't set up on this device yet. Progress is saved on this device.";
+  if(!FAMILY) return;
+  webSync(); setInterval(()=>{ if(document.visibilityState==="visible") webSync(); }, 30000);
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") webSync(); });
+}
+function pushWeb(){ if(!WEB||!FAMILY) return; clearTimeout(pushWeb.t); pushWeb.t=setTimeout(()=>{ webDirty=true; webSync(); },1500); }
+if(WEB) startWebSync(); else startClaudeSync();
+
+/* ===== progress code: carry progress to a device that can't sign in ===== */
+const B32="0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+function makeCode(){
+  const st=norm(S); const b=[1, (st.epoch||0)&255];
+  const day=Math.max(0, dnum(st.lastDay)-dnum("2026-1-1")); b.push(day>>8&255, day&255, Math.min(255,st.streak||0));
+  let sm=0; st.stickers.forEach(x=>{ const i=STICKERS.indexOf(x); if(i>=0) sm|=(1<<i); }); sm>>>=0; b.push(sm>>>24&255, sm>>>16&255, sm>>>8&255, sm&255);
+  let rm=0; STORIES.forEach((x,i)=>{ if(st.readDone[x.id] && i<16) rm|=(1<<i); }); b.push(rm>>8&255, rm&255);
+  const devs=Object.entries(st.dev).filter(([k,d])=>d.s||d.r).sort((p,q)=>q[1].s-p[1].s).slice(0,8);
+  b.push(devs.length); for(const [k,d] of devs){ b.push(+k&255, Math.min(65535,d.s)>>8, Math.min(65535,d.s)&255, Math.min(65535,d.r)>>8, Math.min(65535,d.r)&255); }
+  b.push((b.reduce((x,y)=>x+y,0)&255)^0x5A);
+  let bits="", out=""; b.forEach(x=>bits+=x.toString(2).padStart(8,"0")); while(bits.length%5) bits+="0";
+  for(let i=0;i<bits.length;i+=5) out+=B32[parseInt(bits.substr(i,5),2)];
+  return out.match(/.{1,4}/g).join("-");
+}
+function readCode(code){
+  const clean=code.toUpperCase().replace(/[^0-9A-Z]/g,"").replace(/[IL]/g,"1").replace(/O/g,"0").replace(/U/g,"V");
+  let bits=""; for(const c of clean){ const v=B32.indexOf(c); if(v<0) return null; bits+=v.toString(2).padStart(5,"0"); }
+  const b=[]; for(let i=0;i+8<=bits.length;i+=8) b.push(parseInt(bits.substr(i,8),2));
+  if(b.length<13 || b[0]!==1) return null;
+  const nd=b[11], len=12+nd*5; if(b.length<len+1) return null;
+  if(((b.slice(0,len).reduce((x,y)=>x+y,0)&255)^0x5A)!==b[len]) return null;
+  const day=(b[2]<<8)|b[3], sm=((b[5]<<24)|(b[6]<<16)|(b[7]<<8)|b[8])>>>0, rm=(b[9]<<8)|b[10];
+  const st={epoch:b[1], lastDay: day? dstr(dnum("2026-1-1")+day) : "", streak:b[4], stickers:STICKERS.filter((x,i)=>sm&(1<<i)), readDone:{}, dev:{}, mine:[], mineAt:0, tricky:{}};
+  STORIES.forEach((x,i)=>{ if(i<16 && rm&(1<<i)) st.readDone[x.id]=true; });
+  for(let k=0;k<nd;k++){ const o=12+k*5; st.dev[String(b[o])]={s:(b[o+1]<<8)|b[o+2], r:(b[o+3]<<8)|b[o+4]}; }
+  return norm(st);
+}
+
+/* ===== helpers ===== */
+const $ = (h)=>{ const t=document.createElement("template"); t.innerHTML=h.trim(); return t.content.firstElementChild; };
+const R = (a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick = (arr)=>arr[Math.floor(Math.random()*arr.length)];
+const shuffle = (arr)=>{ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const today = ()=>{ const d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); };
+const yesterday = ()=>{ const d=new Date(); d.setDate(d.getDate()-1); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); };
+function numChoices(ans){ const set=new Set([ans]); const offs=shuffle([1,-1,2,-2,10,-10,3]); for(const o of offs){ if(set.size>=4)break; if(ans+o>=0) set.add(ans+o);} return shuffle([...set]); }
+
+/* sound */
+let AC=null;
+function tone(freqs, dur=.12){ try{ AC = AC || new (window.AudioContext||window.webkitAudioContext)(); let t=AC.currentTime;
+  freqs.forEach(f=>{ const o=AC.createOscillator(), g=AC.createGain(); o.type="triangle"; o.frequency.value=f; g.gain.setValueAtTime(.18,t); g.gain.exponentialRampToValueAtTime(.001,t+dur*1.8); o.connect(g).connect(AC.destination); o.start(t); o.stop(t+dur*2); t+=dur; }); }catch(e){} }
+const yay = ()=>tone([523,659,784]);
+const oops = ()=>tone([311,262],.15);
+
+/* speech */
+let voice=null;
+function pickVoice(){ try{ const vs=speechSynthesis.getVoices(); voice = vs.find(v=>/en-US/.test(v.lang)&&/Samantha|Google US|Female|Ava|Allison/i.test(v.name)) || vs.find(v=>/^en/.test(v.lang)) || null; }catch(e){} }
+try{ speechSynthesis.onvoiceschanged = pickVoice; pickVoice(); }catch(e){}
+function say(text, rate=.85){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); if(voice) u.voice=voice; u.rate=rate; u.pitch=1.05; speechSynthesis.speak(u); return true; }catch(e){ return false; } }
+const canSpeak = ()=>"speechSynthesis" in window;
+
+/* confetti */
+function confetti(){ if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c=document.getElementById("confetti"), x=c.getContext("2d"); c.width=innerWidth; c.height=innerHeight;
+  const cols=["#e0483d","#f6b81c","#2f9e5b","#2f6fd6","#7b5bd6"];
+  const ps=Array.from({length:90},()=>({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*12,vy:Math.random()*-12-3,s:R(6,11),c:pick(cols),r:Math.random()*6}));
+  let n=0; (function f(){ x.clearRect(0,0,c.width,c.height); ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.4;p.r+=.2;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);x.restore();}); if(++n<90) requestAnimationFrame(f); else x.clearRect(0,0,c.width,c.height); })();
+}
+
+/* rewards */
+const STICKERS = ["🐶","🐱","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🐔","🐧","🦉","🦄","🐝","🐞","🦋","🐢","🐙","🦀","🐠","🐬","🐳","🦒","🦓","🐘","🦔","🦩","🐿️"];
+function addStar(){ myDev().s++; totals(S); const t=today(); if(S.lastDay!==t){ S.streak = (S.lastDay===yesterday()) ? S.streak+1 : 1; S.lastDay=t; } save(); updatePills(); }
+function finishRound(){
+  myDev().r++; totals(S); const left = STICKERS.filter(s=>!S.stickers.includes(s)); let st = left.length ? pick(left) : "⭐";
+  if(left.length) S.stickers.push(st); save(); confetti(); tone([523,659,784,1047],.1);
+  const unlocked = COLOR_PAGES.find(p=>p.need===S.rounds);
+  const m = $(`<div class="reward" role="dialog" aria-label="You earned a sticker"><div class="rcard">
+    <h2>Round done!</h2><div class="bigst">${st}</div>
+    <p>${left.length ? "A new sticker for your book!" : "You have every sticker! Super star!"}</p>
+    ${unlocked ? `<p><b>New coloring page:</b> ${unlocked.name}!</p>` : ""}
+    <div class="row"><button class="next" id="again">Play again</button><button class="tool" id="home">Home</button></div></div></div>`);
+  document.body.appendChild(m);
+  if(current && current.read){ m.querySelector("#again").textContent="More stories"; m.querySelector("#again").onclick=()=>{ m.remove(); go("library"); }; }
+  else m.querySelector("#again").onclick=()=>{ m.remove(); startGame(current); };
+  m.querySelector("#home").onclick=()=>{ m.remove(); go("home"); };
+}
+
+/* ===== GAMES ===== */
+const GAMES = [
+  {id:"doubles", area:"math", ico:"🐞", name:"Doubles Bugs", desc:"Doubles and near doubles", color:"t-red", gen:genDoubles},
+  {id:"ten", area:"math", ico:"🔟", name:"Make a 10", desc:"Move dots to make a friendly 10", color:"t-sun", gen:genTen},
+  {id:"hop", area:"math", ico:"🐸", name:"Frog Hops", desc:"Count on with a number line", color:"t-leaf", gen:genHop},
+  {id:"split", area:"math", ico:"🧩", name:"Tens & Ones", desc:"Break numbers apart to add", color:"t-blue", gen:genSplit},
+  {id:"adjust", area:"math", ico:"🎨", name:"Friendly Numbers", desc:"Adjust to make adding easy", color:"t-grape", gen:genAdjust},
+  {id:"doors", area:"words", ico:"🚪", name:"Open or Closed?", desc:"Sort the syllables", color:"t-blue", gen:genDoors},
+  {id:"compound", area:"words", ico:"🔗", name:"Word Builder", desc:"Make compound words", color:"t-leaf", gen:genCompound},
+  {id:"heart", area:"words", ico:"❤️", name:"Heart Words", desc:"friend, because, and old favorites", color:"t-red", gen:genHeart},
+  {id:"spell", area:"words", ico:"🔊", name:"Listen & Spell", desc:"Hear a word, tap the letters", color:"t-sun", gen:()=>genSpell()},
+  {id:"lookend", area:"reading", ico:"👀", name:"Look to the End", desc:"Read every letter, not just the start", color:"t-blue", gen:genLookEnd},
+  {id:"story", area:"review", ico:"📖", name:"Story Problems", desc:"Add or subtract?", color:"t-leaf", gen:()=>genOwn(randomProblem())},
+  {id:"endings", area:"review", ico:"✏️", name:"Word Endings", desc:"-s, -es, -ed, -ing", color:"t-grape", gen:genEndings},
+  {id:"bee", area:"review", ico:"🐝", name:"Spelling Bee", desc:"The 50 bee words", color:"t-sun", gen:()=>genSpell(REVIEW.bee, true)},
+  {id:"mix", area:"review", ico:"🎲", name:"Mix It Up", desc:"A little of everything", color:"t-red", gen:genMix},
+  {id:"cards", area:"create", ico:"🃏", name:"Blackjack 21", desc:"Add your cards. Beat the dealer!", color:"t-grape", gen:genCards},
+  {id:"mine", area:"create", ico:"⭐", name:"My Problems", desc:()=> S.mine.length ? `${S.mine.length} problem${S.mine.length>1?"s":""} to solve` : "Make one first!", color:"t-sun", gen:()=>genOwn(pick(S.mine))},
+];
+
+/* Each generator returns {render(el, done)} where done(firstTry) is called when the question is solved */
+function mcStep(el, opts){ // opts: {prompt, show(html), answer, choices, hint, words}
+  return new Promise(res=>{
+    const box = $(`<div style="display:flex;flex-direction:column;gap:14px;align-items:center;width:100%"></div>`);
+    if(opts.prompt) box.appendChild($(`<div class="prompt">${opts.prompt}</div>`));
+    if(opts.show) box.appendChild($(`<div>${opts.show}</div>`));
+    const ch = $(`<div class="choices ${opts.one?'one':''}"></div>`); let miss=false;
+    const hintEl = $(`<div class="hint" hidden></div>`);
+    opts.choices.forEach(c=>{ const b=$(`<button class="choice ${opts.words?'wordc':''} ${opts.cls||''}">${c}</button>`);
+      b.onclick=()=>{ if(String(c)===String(opts.answer)){ b.classList.add("right"); yay(); ch.querySelectorAll("button").forEach(x=>x.disabled=true); setTimeout(()=>{ box.remove(); res(!miss); }, 650); }
+        else { b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong"); oops(); miss=true; if(opts.hint){ hintEl.innerHTML="💡 "+opts.hint; hintEl.hidden=false; } } };
+      ch.appendChild(b); });
+    box.appendChild(ch); box.appendChild(hintEl); el.appendChild(box);
+  });
+}
+
+function genDoubles(){
+  const a=R(2,10), near=Math.random()<.55, b= near? a+1 : a; const [x,y] = Math.random()<.5?[a,b]:[b,a]; const ans=x+y;
+  const bug = (n)=>`<svg width="120" height="110" viewBox="0 0 120 110" aria-hidden="true"><circle cx="60" cy="18" r="13" fill="var(--ink)"/><circle cx="60" cy="62" r="44" fill="#e0483d" stroke="var(--ink)" stroke-width="3"/><line x1="60" y1="20" x2="60" y2="106" stroke="var(--ink)" stroke-width="3"/>${dotsOn(n)}</svg>`;
+  function dotsOn(n){ const L=[[38,42],[30,62],[40,82],[48,58],[25,46],[50,96],[28,80],[46,30],[22,62],[36,98],[52,76]]; let s=""; for(let i=0;i<Math.min(n,11);i++){ const [px,py]=L[i]; s+=`<circle cx="${px}" cy="${py}" r="5" fill="var(--ink)"/><circle cx="${120-px}" cy="${py}" r="5" fill="var(--ink)"/>`;} return s; }
+  return { async render(el){
+    const show = `<div class="big">${x} + ${y}</div>`;
+    const hint = near ? `${Math.min(x,y)} + ${Math.min(x,y)} = ${2*Math.min(x,y)}. Then 1 more!` : `It's a double! Think of ${a} + ${a}.`;
+    const prompt = near ? "Near double! Use a double, then add 1." : "A double! Same number twice.";
+    const first = await mcStep(el,{prompt, show: (near?"":bug(a))+show, answer:ans, choices:numChoices(ans), hint});
+    return first; } };
+}
+
+function genTen(){
+  const bigMode = Math.random()<.45;
+  if(!bigMode){
+    const a=R(6,9), b=R(11-a,9); const move=10-a, rest=b-move;
+    return { async render(el){
+      const frames = $(`<div class="tfs"><div class="tf" id="f1"></div><div class="tf" id="f2"></div></div>`);
+      const f1=frames.querySelector("#f1"), f2=frames.querySelector("#f2");
+      for(let i=0;i<10;i++){ f1.appendChild($(`<span>${i<a?'<i class="dot a"></i>':''}</span>`)); f2.appendChild($(`<span>${i<b?'<i class="dot b"></i>':''}</span>`)); }
+      el.appendChild($(`<div class="big">${a} + ${b}</div>`)); el.appendChild(frames);
+      const s1 = await mcStep(el,{prompt:`How many yellow dots should move up to fill the top frame?`, answer:move, choices:numChoices(move), hint:`Count the empty boxes on top.`});
+      // animate move
+      const top=f1.querySelectorAll("span"), bot=[...f2.querySelectorAll("span")];
+      for(let i=0;i<move;i++){ top[a+i].innerHTML='<i class="dot b"></i>'; bot[b-1-i].innerHTML=''; }
+      const s2 = await mcStep(el,{prompt:`Now the top has 10! 10 + ${rest} = ?`, answer:10+rest, choices:numChoices(10+rest), hint:`10 and ${rest} more.`});
+      el.appendChild($(`<div class="steps"><span class="ok">${a} + ${b} = ${a+b}</span></div>`));
+      return s1&&s2; } };
+  }
+  const t=R(1,8)*10, o=R(5,9), a=t+o, b=R(11-o,9), need=10-o, rest=b-need, nt=t+10;
+  return { async render(el){
+    el.appendChild($(`<div class="big">${a} + ${b}</div>`));
+    const s1 = await mcStep(el,{prompt:`Get to the friendly number ${nt}. ${a} + ? = ${nt}`, answer:need, choices:numChoices(need), hint:`Count up from ${a} to ${nt}.`});
+    el.appendChild($(`<div class="steps"><span class="ok">${a} + ${need} = ${nt}</span> · ${b} − ${need} leaves ${rest}</div>`));
+    const s2 = await mcStep(el,{prompt:`${nt} + ${rest} = ?`, answer:nt+rest, choices:numChoices(nt+rest), hint:`${nt} and ${rest} more.`});
+    return s1&&s2; } };
+}
+
+function genHop(){
+  const big=R(18,94), small=R(1,Math.min(5,100-big)); const flip=Math.random()<.5; const [x,y]=flip?[small,big]:[big,small];
+  return { async render(el){
+    el.appendChild($(`<div class="big">${x} + ${y}</div>`));
+    const s1 = await mcStep(el,{prompt:"Start with the BIGGER number. Which one?", answer:big, choices:shuffle([big,small]), hint:`${big} is bigger than ${small}.`});
+    const span=7, w=560, pad=30, step=(w-2*pad)/span;
+    let hops=0;
+    const wrap=$(`<div class="nl"></div>`); el.appendChild(wrap);
+    const draw=()=>{ let s=`<svg viewBox="0 0 ${w} 120" role="img" aria-label="Number line starting at ${big}"><line x1="${pad-10}" y1="80" x2="${w-pad+10}" y2="80" stroke="var(--ink)" stroke-width="4"/>`;
+      for(let i=0;i<=span;i++){ const X=pad+i*step; s+=`<line x1="${X}" y1="70" x2="${X}" y2="90" stroke="var(--ink)" stroke-width="3"/><text x="${X}" y="114" text-anchor="middle" font-size="20" font-family="Andika, sans-serif" fill="var(--ink)" font-weight="${i===0||i===hops?700:400}">${big+i}</text>`; }
+      for(let i=0;i<hops;i++){ const X1=pad+i*step, X2=X1+step; s+=`<path d="M${X1} 68 Q ${(X1+X2)/2} 14 ${X2} 68" fill="none" stroke="var(--leaf)" stroke-width="4"/>`; }
+      const fx=pad+hops*step; s+=`<text x="${fx}" y="62" text-anchor="middle" font-size="34">🐸</text></svg>`; wrap.innerHTML=s; };
+    draw();
+    const hopBtn=$(`<button class="next">Hop! (0 of ${small})</button>`); el.appendChild(hopBtn);
+    await new Promise(res=>{ hopBtn.onclick=()=>{ hops++; tone([440+hops*60],.08); draw(); hopBtn.textContent=`Hop! (${hops} of ${small})`; if(hops===small){ hopBtn.remove(); res(); } }; });
+    const s2 = await mcStep(el,{prompt:`Where did the frog land?`, answer:big+small, choices:numChoices(big+small), hint:`Look under the frog!`});
+    return s1&&s2; } };
+}
+
+function genSplit(){
+  let a,b; do{ a=R(12,68); b=R(11,89-a); }while(a+b>99 || b<11);
+  const at=Math.floor(a/10)*10, ao=a%10, bt=Math.floor(b/10)*10, bo=b%10;
+  return { async render(el){
+    el.appendChild($(`<div class="big">${a} + ${b}</div>`));
+    el.appendChild($(`<div class="steps">${a} → <b>${at}</b> + <b>${ao}</b> &nbsp;&nbsp; ${b} → <b>${bt}</b> + <b>${bo}</b></div>`));
+    const s1 = await mcStep(el,{prompt:`Add the tens: ${at} + ${bt}`, answer:at+bt, choices:numChoices(at+bt), hint:`${at/10} tens + ${bt/10} tens = ${(at+bt)/10} tens.`});
+    const s2 = await mcStep(el,{prompt:`Add the ones: ${ao} + ${bo}`, answer:ao+bo, choices:numChoices(ao+bo), hint: Math.abs(ao-bo)<=1 && ao&&bo ? `Try a double!` : `Count on from the bigger one.`});
+    const s3 = await mcStep(el,{prompt:`Put them together: ${at+bt} + ${ao+bo}`, answer:a+b, choices:numChoices(a+b), hint:`Start at ${at+bt} and add ${ao+bo}.`});
+    el.appendChild($(`<div class="steps"><span class="ok">${a} + ${b} = ${a+b}</span></div>`));
+    return s1&&s2&&s3; } };
+}
+
+function genAdjust(){
+  let a,b,k; do{ const t=R(1,6)*10; const o=pick([7,8,9]); a=t+o; k=10-o; b=R(12,60); }while(a+b>99 || b%10<k);
+  const na=a+k, nb=b-k;
+  return { async render(el){
+    el.appendChild($(`<div class="big">${a} + ${b}</div>`));
+    const s1 = await mcStep(el,{prompt:`Make ${a} a friendly number. ${a} + ? = ${na}`, answer:k, choices:numChoices(k), hint:`Count up from ${a} to ${na}.`});
+    const s2 = await mcStep(el,{prompt:`Give ${k} to ${a}, so take ${k} away from ${b}: ${b} − ${k} = ?`, answer:nb, choices:numChoices(nb), hint:`Count back ${k} from ${b}.`});
+    const s3 = await mcStep(el,{prompt:`Now add the friendly numbers: ${na} + ${nb}`, answer:na+nb, choices:numChoices(na+nb), hint:`${na} is easy: add the tens, then the ones.`});
+    el.appendChild($(`<div class="steps"><span class="ok">${a} + ${b} = ${na} + ${nb} = ${a+b}</span></div>`));
+    return s1&&s2&&s3; } };
+}
+
+const DOOR_OPEN = `<svg width="56" height="72" viewBox="0 0 34 44" aria-hidden="true"><rect x="2" y="2" width="30" height="40" fill="#fff6d6" stroke="currentColor" stroke-width="2"/><path d="M2 2 L16 8 L16 46 L2 42 Z" fill="#7fb3e0" stroke="currentColor" stroke-width="2"/></svg>`;
+const DOOR_CLOSED = `<svg width="56" height="72" viewBox="0 0 34 44" aria-hidden="true"><rect x="2" y="2" width="30" height="40" fill="#e07f7f" stroke="currentColor" stroke-width="2"/><circle cx="25" cy="23" r="2.5" fill="currentColor"/></svg>`;
+function genDoors(){
+  const isOpen=Math.random()<.5; const w = pick(isOpen?WEEK.open:WEEK.closed);
+  return { async render(el){
+    el.appendChild($(`<div class="prompt">Read the word. Is the syllable open or closed?</div>`));
+    el.appendChild($(`<div class="word">${w}</div>`));
+    if(canSpeak()){ const sp=$(`<button class="speak">🔊 Hear it</button>`); sp.onclick=()=>say(w); el.appendChild(sp); }
+    const d=$(`<div class="doors"><button class="door o" data-v="1">${DOOR_OPEN}Open<small>ends in a vowel · long sound</small></button><button class="door c" data-v="0">${DOOR_CLOSED}Closed<small>ends in a consonant · short sound</small></button></div>`);
+    el.appendChild(d); const hint=$(`<div class="hint" hidden></div>`); el.appendChild(hint); let miss=false;
+    await new Promise(res=>d.querySelectorAll("button").forEach(b=>b.onclick=()=>{
+      if((b.dataset.v==="1")===isOpen){ b.classList.add("right"); yay(); say(w); d.querySelectorAll("button").forEach(x=>x.disabled=true); setTimeout(res,800); }
+      else { b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong"); oops(); miss=true; const last=w[w.length-1];
+        hint.innerHTML = `💡 <b>${w}</b> ends with <b>${last}</b>. ${"aeiou".includes(last)?"That's a vowel, so the door is open!":"That's a consonant. It closes the door!"}`; hint.hidden=false; }
+    }));
+    return !miss; } };
+}
+
+function genCompound(){
+  const [a,b]=pick(WEEK.compounds);
+  // skip second parts that would ALSO make a real word with this first part (up+set, kick+stand...)
+  const ALSO = {up:["set"],back:["fire"],hand:["set","ball"],kick:["stand"],hot:["box"],sun:["box"]};
+  const others=shuffle(WEEK.compounds.map(p=>p[1]).filter(x=>x!==b && !(ALSO[a]||[]).includes(x))).slice(0,3);
+  return { async render(el){
+    const first = await mcStep(el,{prompt:"Pick the word that makes a compound word.", show:`<div class="word">${a} + ?</div>`, answer:b, choices:shuffle([b,...others]), words:true, hint:`Say "${a}" with each word. Which one is a real word?`});
+    el.appendChild($(`<div class="word" style="font-size:clamp(40px,11vw,64px)">${a} + ${b} = <span style="color:var(--leaf)">${a}${b}</span></div>`)); say(a+b);
+    await new Promise(r=>setTimeout(r,900));
+    return first; } };
+}
+
+function genHeart(){
+  const h=pick(Math.random()<.6?WEEK.heart:REVIEW.heart); const mode=Math.random()<.5;
+  const CLASH={any:"many",many:"any"}; // both fit some sentences, so never offer them together
+  return { async render(el){
+    if(mode){
+      el.appendChild($(`<div class="prompt">Listen. Which one is spelled the right way?</div>`));
+      if(canSpeak()){ const sp=$(`<button class="speak">🔊 Hear it</button>`); sp.onclick=()=>say(h.w); el.appendChild(sp); setTimeout(()=>say(h.w),300); }
+      else el.appendChild($(`<div class="prompt"><b>${h.w}</b>... cover it with your hand!</div>`));
+      return await mcStep(el,{answer:h.w, choices:shuffle([h.w,...shuffle(h.wrong).slice(0,3)]), words:true, hint:h.hint});
+    }
+    const others=shuffle([...WEEK.heart,...REVIEW.heart].map(x=>x.w).filter(x=>x!==h.w && x!==CLASH[h.w])).slice(0,3);
+    return await mcStep(el,{prompt:"Which heart word fits?", show:`<div style="font-size:28px;font-weight:700">${h.s.replace("___","______")}</div>`, answer:h.w, choices:shuffle([h.w,...others]), words:true, hint:`Read the sentence out loud with each word.`});
+  } };
+}
+
+/* -s or -es, and -ed or -ing in a sentence (UFLI 63, 64, 65) */
+function genEndings(){
+  if(Math.random()<.4){
+    const isEs=Math.random()<.5; const [one,two]=pick(isEs?REVIEW.es:REVIEW.s); const wrong=isEs? one+"s" : one+"es";
+    return { async render(el){
+      el.appendChild($(`<div class="prompt">One ${one}, two ___. Which one is right?</div>`));
+      el.appendChild($(`<div class="word" style="font-size:clamp(40px,11vw,64px)">1 ${one} → 2 ?</div>`));
+      const first=await mcStep(el,{answer:two, choices:shuffle([two,wrong]), words:true,
+        hint: isEs ? `<b>${one}</b> ends in ${one.match(/(ch|sh|s|x|z)$/)[0]}. After s, x, z, ch, or sh, add <b>-es</b>. You can hear the extra beat: ${two.replace(/es$/,"-es")}!` : `Most words just add <b>-s</b>. No extra beat: ${two}.`});
+      say(two); await new Promise(r=>setTimeout(r,700)); return first; } };
+  }
+  const it=pick(REVIEW.endings); const past = it.ed && Math.random()<.5;
+  const sent = past? it.past : it.now, ans = past? it.ed : it.ing;
+  const choices = it.ed ? [it.ed,it.ing,it.s] : [it.ing,it.s,it.b];
+  return { async render(el){
+    el.appendChild($(`<div class="prompt">Which word fits? Use <b>${it.b}</b>.</div>`));
+    const first=await mcStep(el,{show:`<div style="font-size:28px;font-weight:700;max-width:22ch">${sent.replace("___","______")}</div>`, answer:ans, choices:shuffle(choices), words:true,
+      hint: past ? `"Yesterday" and "last" tell us it already happened. Add <b>-ed</b>.` : `"is," "am," or "are" goes with <b>-ing</b>. It's happening right now.`});
+    const full=sent.replace("___",ans); el.appendChild($(`<div style="font-size:24px;font-weight:700;color:var(--leaf)">${full}</div>`)); say(full);
+    await new Promise(r=>setTimeout(r,900)); return first; } };
+}
+
+/* ===== READING: sound it out ===== */
+function chunksHTML(word){
+  return chunkWord(word).map(s=>`<span class="syl">${s.map(c=>`<span class="ch ${c.silent?'s':c.suf?'suf':c.v?'v':''}">${escapeHTML(c.t)}</span>`).join("")}</span>`).join("");
+}
+function sayP(text, rate){ return new Promise(res=>{ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); if(voice) u.voice=voice; u.rate=rate; u.pitch=1.05;
+  let done=false; const fin=()=>{ if(!done){ done=true; res(); } }; u.onend=fin; u.onerror=fin; setTimeout(fin, 1200+text.length*220/rate); speechSynthesis.speak(u); }catch(e){ res(); } }); }
+const wait=(ms)=>new Promise(r=>setTimeout(r,ms));
+let soundRun=0;
+async function soundOut(box, word){
+  const my=++soundRun; const wd=box.querySelector(".sw-word"); wd.classList.remove("all");
+  const chs=[...wd.querySelectorAll(".ch")], syls=[...wd.querySelectorAll(".syl")];
+  chs.forEach(c=>c.classList.remove("lit"));
+  for(const s of syls){ for(const c of s.querySelectorAll(".ch")){ if(my!==soundRun) return; c.classList.add("lit"); tone([520],.03); await wait(c.classList.contains("s")?250:480); c.classList.remove("lit"); } await wait(220); }
+  if(my!==soundRun) return; wd.classList.add("all");
+  await sayP(word,.42); if(my!==soundRun) return; await wait(250); await sayP(word,.9);
+}
+function openSound(word){
+  const key=word.toLowerCase().replace(/[’']s$/,""); S.tricky[key]=(S.tricky[key]||0)+1; save();
+  document.querySelector(".sheet")?.remove();
+  const heart=HEART_WORDS.has(key);
+  const sh=$(`<div class="sheet" role="dialog" aria-label="Sound out ${escapeHTML(word)}">
+    ${heart?'<span class="heartb">❤️ Heart word: part of it breaks the rules. Learn it by heart!</span>':''}
+    <div class="sw-word">${chunksHTML(word)}</div>
+    <div class="tipline">Look at every part, all the way to the end. <span style="color:var(--red)">Red</span> parts are vowel sounds.${chunkWord(word).flat().some(c=>c.silent)?' Gray letters are silent.':''}</div>
+    <div class="row"><button class="speak" id="so">🐢 Sound it out</button><button class="speak" id="sy">🔊 Say it</button><button class="next" id="sc">Got it ✓</button></div></div>`);
+  document.body.appendChild(sh);
+  sh.querySelector("#so").onclick=()=>soundOut(sh,word);
+  sh.querySelector("#sy").onclick=()=>{ soundRun++; say(word,.85); };
+  sh.querySelector("#sc").onclick=()=>{ soundRun++; try{speechSynthesis.cancel();}catch(e){} sh.remove(); };
+  soundOut(sh,word);
+}
+function storyHTML(st){
+  return st.text.map((para,pi)=>{ let html="", re=/[A-Za-z’']+/g, last=0, m;
+    while((m=re.exec(para))){ const core=m[0].replace(/^['’]+|['’]+$/g,""); const off=m.index+m[0].indexOf(core);
+      html+=escapeHTML(para.slice(last,off))+`<span class="w" data-w="${escapeHTML(core)}" data-p="${pi}" data-c="${off}">${escapeHTML(core)}</span>`; last=off+core.length; }
+    return `<p>${html+escapeHTML(para.slice(last))}</p>`; }).join("");
+}
+const LEVELS=["I","J","K","L","M"];
+function nextStory(){ return STORIES.find(s=>!S.readDone[s.id]); }
+function renderLibrary(){
+  const nx=nextStory();
+  app.innerHTML = topBar(true)+`<div class="book"><h2>📚 Story Time</h2>
+    <p class="prompt" style="max-width:none;text-align:left">Read the story out loud. Stuck on a word? <b>Tap it</b> and we'll sound it out together.</p>
+    <div class="shelf">${LEVELS.map(L=>`<div><div class="shelf-row" style="margin:10px 0 6px"><span class="lvl lvl-${L}">${L}</span><span class="lbl" style="margin:0">Level ${L}</span></div>
+      <div class="shelf-row">${STORIES.filter(s=>s.lvl===L).map(s=>`<button class="bk ${nx&&nx.id===s.id?'nextup':''}" data-s="${s.id}"><span class="bi">${s.ico}</span><span><b>${s.title}</b><small>${S.readDone[s.id]?"✅ Read it!":nx&&nx.id===s.id?"⭐ Next up":"Tap to read"}</small></span></button>`).join("")}</div></div>`).join("")}</div></div>`;
+  bindBack(); app.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>go("read",b.dataset.s));
+}
+function renderRead(id){
+  const st=STORIES.find(s=>s.id===id); current={read:true, id:"read"};
+  app.innerHTML = topBar(true)+`<div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:26px">${st.ico} ${st.title}</h2><span class="lvl lvl-${st.lvl}">${st.lvl}</span></div>
+    <p class="tipline" style="text-align:left;max-width:none;margin:0">Tap any word to sound it out.</p>
+    <div class="story" id="tx">${storyHTML(st)}</div>
+    <div class="row" id="ctl"><button class="next" id="fin">I finished reading! ✓</button>${S.readDone[id]?'<button class="speak" id="ra">🎧 Read along</button>':''}</div>
+    <div class="game" id="qa" hidden></div>`;
+  bindBack(); const tx=app.querySelector("#tx");
+  tx.querySelectorAll(".w").forEach(s=>s.onclick=()=>{ s.classList.add("tapped"); openSound(s.dataset.w); });
+  const ra=app.querySelector("#ra"); if(ra) ra.onclick=()=>readAlong(st,tx);
+  app.querySelector("#fin").onclick=async()=>{
+    app.querySelector("#ctl").hidden=true; const qa=app.querySelector("#qa"); qa.hidden=false; document.querySelector(".sheet")?.remove();
+    qa.innerHTML=`<h2>Story questions</h2><div class="prog" id="pg"></div><div id="qarea" style="display:flex;flex-direction:column;gap:16px;align-items:center;width:100%"></div>`;
+    qa.scrollIntoView({behavior:"smooth"}); const area=qa.querySelector("#qarea"), pg=qa.querySelector("#pg");
+    for(let i=0;i<st.qs.length;i++){
+      if(view!=="read") return;
+      pg.innerHTML=st.qs.map((_,k)=>`<i class="${k<i?'done':k===i?'now':''}"></i>`).join("");
+      const [q,ans,wrong]=st.qs[i]; area.innerHTML="";
+      if(canSpeak()){ const sp=$(`<button class="speak">🔊 Read the question</button>`); sp.onclick=()=>say(q); area.appendChild(sp); }
+      await mcStep(area,{prompt:`<b style="color:var(--ink);font-size:22px">${escapeHTML(q)}</b>`, answer:escapeHTML(ans), choices:shuffle([ans,...wrong].map(escapeHTML)), one:true, hint:"Look back in the story to find the answer."});
+      addStar();
+    }
+    S.readDone[id]=true; save();
+    pg.innerHTML=st.qs.map(()=>`<i class="done"></i>`).join("");
+    area.innerHTML=`<div style="font-family:var(--display);font-size:26px;color:var(--leaf)">You read the whole story! +${st.qs.length} ⭐</div>
+      <p class="prompt">Now listen and follow along. Then try reading it again. It gets smoother every time!</p>
+      <div class="row"><button class="speak" id="ra2">🎧 Read along</button><button class="next" id="done">Get my sticker</button></div>`;
+    area.querySelector("#ra2").onclick=()=>{ tx.scrollIntoView({behavior:"smooth"}); readAlong(st,tx); };
+    area.querySelector("#done").onclick=()=>{ soundRun++; try{speechSynthesis.cancel();}catch(e){} finishRound(); };
+  };
+}
+async function readAlong(st,tx){
+  const my=++soundRun;
+  for(let pi=0;pi<st.text.length;pi++){
+    if(my!==soundRun || view!=="read") return;
+    const spans=[...tx.querySelectorAll(`.w[data-p="${pi}"]`)]; let lastOn=null;
+    await new Promise(res=>{ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(st.text[pi]); if(voice) u.voice=voice; u.rate=.8; u.pitch=1.05;
+      let gotB=false; u.onboundary=(e)=>{ if(e.name && e.name!=="word") return; gotB=true; const sp=spans.filter(s=>+s.dataset.c<=e.charIndex).pop(); if(sp){ lastOn?.classList.remove("say"); sp.classList.add("say"); lastOn=sp; } };
+      const fin=()=>{ lastOn?.classList.remove("say"); spans.forEach(s=>s.classList.remove("say")); res(); }; u.onend=fin; u.onerror=fin;
+      setTimeout(()=>{ if(!gotB) spans.forEach(s=>s.classList.add("say")); },400);
+      speechSynthesis.speak(u); }catch(e){ res(); } });
+    await wait(250);
+  }
+}
+
+/* Look to the End: same start, different endings */
+function genLookEnd(){
+  const set=pick(SAME_START), w=pick(set);
+  return { async render(el){
+    el.appendChild($(`<div class="prompt">Listen. Find the word you hear. Read <b>every</b> letter, all the way to the end!</div>`));
+    if(canSpeak()){ const sp=$(`<button class="speak">🔊 Hear it again</button>`); sp.onclick=()=>say(w); el.appendChild(sp); setTimeout(()=>say(w),300); }
+    const first=await mcStep(el,{answer:w, choices:shuffle(set), words:true, hint:`These all start the same way. Slide your finger under each word and say every sound to the end.`});
+    el.appendChild($(`<div class="sw-word" style="font-size:clamp(40px,11vw,60px)">${chunksHTML(w)}</div>`)); say(w);
+    await wait(900); return first; } };
+}
+
+function genMix(){ return pick(GAMES.filter(g=>!["mix","mine","cards"].includes(g.id))).gen(); }
+
+/* ===== STORY PROBLEMS (Math Unit 4 + her own problems) ===== */
+const P=(n,s,p)=>`${n} ${n===1?s:(p||s+"s")}`, isAre=(n)=>n===1?"is":"are";
+const THEMES = {
+  unicorn:{ico:"🦄", name:"Unicorns",
+    join:(a,b)=>`There ${isAre(a)} ${P(a,"unicorn")} in the meadow. ${b} more ${b===1?"unicorn comes":"unicorns come"} to play. How many unicorns are there now?`,
+    take:(a,b)=>`There ${isAre(a)} ${P(a,"unicorn")} in the meadow. ${b} ${b===1?"flies":"fly"} away over the rainbow. How many unicorns are left?`,
+    compare:(a,b)=>`Sparkle the unicorn has ${P(a,"star")} on her saddle. Moonbeam has ${P(b,"star")}. How many more stars does Sparkle have?`},
+  rainbow:{ico:"🌈", name:"Rainbows",
+    join:(a,b)=>`You see ${P(a,"rainbow")} on Monday and ${P(b,"rainbow")} on Tuesday. How many rainbows do you see in all?`,
+    take:(a,b)=>`You have ${P(a,"rainbow sticker")}. You give ${b} to your friend. How many rainbow stickers do you have left?`,
+    compare:(a,b)=>`The big rainbow has ${P(a,"sparkle")}. The little rainbow has ${P(b,"sparkle")}. How many more sparkles does the big rainbow have?`},
+  flower:{ico:"🌸", name:"Flowers",
+    join:(a,b)=>`There ${isAre(a)} ${P(a,"flower")} in the garden. You plant ${b} more. How many flowers are in the garden now?`,
+    take:(a,b)=>`You pick ${P(a,"flower")}. You give ${b} to Grandma. How many flowers do you have left?`,
+    compare:(a,b)=>`The red pot has ${P(a,"flower")}. The blue pot has ${P(b,"flower")}. How many more flowers are in the red pot?`},
+  doll:{ico:"👗", name:"Dolls",
+    join:(a,b)=>`Your doll has ${P(a,"outfit")}. She gets ${b} new ${b===1?"outfit":"outfits"} for her birthday. How many outfits does she have now?`,
+    take:(a,b)=>`Your doll has ${P(a,"hair bow")}. She gives ${b} to her friend's doll. How many hair bows does she have left?`,
+    compare:(a,b)=>`Your doll has ${P(a,"pair of shoes","pairs of shoes")}. Her best friend has ${P(b,"pair","pairs")}. How many more pairs does your doll have?`},
+  hoops:{ico:"🏀", name:"Basketball",
+    join:(a,b)=>`Your team scores ${P(a,"point")} in the first half and ${P(b,"point")} in the second half. How many points does your team score in all?`,
+    take:(a,b)=>`The coach has ${P(a,"basketball")}. ${b} ${b===1?"rolls":"roll"} away. How many basketballs are left?`,
+    compare:(a,b)=>`Your team scored ${P(a,"point")}. The other team scored ${P(b,"point")}. How many more points did your team score?`},
+  animal:{ico:"🐶", name:"Animals",
+    join:(a,b)=>`There ${isAre(a)} ${P(a,"puppy","puppies")} at the park. ${b} more ${b===1?"puppy comes":"puppies come"}. How many puppies are at the park now?`,
+    take:(a,b)=>`There ${isAre(a)} ${P(a,"bird")} on the fence. ${b} ${b===1?"flies":"fly"} away. How many birds are left?`,
+    compare:(a,b)=>`The cat has ${P(a,"toy")}. The dog has ${P(b,"toy")}. How many more toys does the cat have?`},
+};
+const TYPES = {join:{ico:"➕", name:"Join"}, take:{ico:"➖", name:"Take away"}, compare:{ico:"⚖️", name:"Compare"}};
+const TYPE_HINT = {join:"The group gets bigger, so <b>add</b>.", take:"Some go away, so the group gets smaller. <b>Subtract</b>.", compare:`"How many more" means compare. <b>Subtract</b> the smaller number from the bigger one.`};
+function problemParts(p){
+  const add = p.type==="join";
+  return { text: p.text || THEMES[p.theme][p.type](p.a,p.b), ans: add? p.a+p.b : p.a-p.b,
+    eq: `${p.a} ${add?"+":"−"} ${p.b} = ?`, wrongEq: `${p.a} ${add?"−":"+"} ${p.b} = ?` };
+}
+function randomProblem(){
+  const theme=pick(Object.keys(THEMES)), type=pick(["join","join","take","take","compare"]); let a,b;
+  const big = Math.random()<.3; // sometimes 2-digit numbers, like Unit 5
+  if(type==="join"){ if(big){ a=R(12,75); b=R(3,Math.min(24,99-a)); } else { a=R(2,12); b=R(1,Math.min(9,20-a)); } }
+  else { if(big){ a=R(25,99); b=R(3,Math.min(20,a-2)); } else { a=R(6,20); b=R(1,a-1); } }
+  return {theme,type,a,b};
+}
+function genOwn(p){
+  const q=problemParts(p); const th=THEMES[p.theme]||THEMES.animal;
+  return { async render(el){
+    el.appendChild($(`<div style="font-size:54px;line-height:1">${th.ico}</div>`));
+    el.appendChild($(`<div style="font-size:24px;font-weight:700;max-width:26ch;line-height:1.35">${escapeHTML(q.text)}</div>`));
+    if(canSpeak()){ const sp=$(`<button class="speak">🔊 Read it to me</button>`); sp.onclick=()=>say(q.text); el.appendChild(sp); }
+    const s1 = await mcStep(el,{prompt:"Which number sentence matches the story?", answer:q.eq, choices:shuffle([q.eq,q.wrongEq]), cls:"eqc", hint:TYPE_HINT[p.type]});
+    const s2 = await mcStep(el,{prompt:`Solve it: ${q.eq}`, answer:q.ans, choices:numChoices(q.ans), hint: p.type==="join" ? `Try a strategy: doubles, make a 10, or count on from ${Math.max(p.a,p.b)}.` : `Count back ${p.b} from ${p.a}, or count up from ${p.b} to ${p.a}.`});
+    el.appendChild($(`<div class="steps"><span class="ok">${q.eq.replace("?",q.ans)}</span></div>`));
+    return s1&&s2; } };
+}
+
+/* ===== BLACKJACK 21: add up every hand ===== */
+const SUITS=[["♥",1],["♦",1],["♣",0],["♠",0]], RANKS=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+const cardVal=(c)=> c.r==="A"?1 : ["J","Q","K"].includes(c.r)?10 : +c.r;
+function handTotal(h){ let t=h.reduce((s,c)=>s+cardVal(c),0); if(h.some(c=>c.r==="A") && t+10<=21) t+=10; return t; }
+function cardHTML(c,hide){ if(hide) return `<div class="pcard back" aria-label="Face-down card"></div>`;
+  return `<div class="pcard ${c.red?'red':''}" aria-label="${c.r} of ${c.s}"><span>${c.r}</span><span class="mid">${c.s}</span><span class="br">${c.r}</span></div>`; }
+function genCards(){
+  const deck=shuffle(SUITS.flatMap(([s,red])=>RANKS.map(r=>({r,s,red})))); const draw=()=>deck.pop();
+  const me=[draw(),draw()], dl=[draw(),draw()];
+  const valHint=(h)=>`${h.map(c=>c.r==="A"?"A (1 or 11)":["J","Q","K"].includes(c.r)?`${c.r} (10)`:c.r).join(" + ")}. An ace is 11 unless that goes over 21.`;
+  return { async render(el){
+    el.appendChild($(`<div class="prompt">Get close to 21 without going over. J, Q, K are 10. A is 1 or 11.</div>`));
+    const dBox=$(`<div><div class="lbl">Dealer</div><div class="hand" id="dh"></div></div>`), mBox=$(`<div><div class="lbl">You</div><div class="hand" id="mh"></div></div>`);
+    el.append(dBox,mBox); const area=$(`<div style="display:flex;flex-direction:column;gap:14px;align-items:center;width:100%"></div>`); el.appendChild(area);
+    const showD=(hide)=>dBox.querySelector("#dh").innerHTML=dl.map((c,i)=>cardHTML(c,hide&&i===1)).join("");
+    const showM=()=>mBox.querySelector("#mh").innerHTML=me.map(c=>cardHTML(c)).join("");
+    showD(true); showM(); let ok=true, mine;
+    while(true){
+      mine=handTotal(me);
+      ok = (await mcStep(area,{prompt:"Add your cards. What's your total?", answer:mine, choices:numChoices(mine), hint:valHint(me)})) && ok;
+      if(mine>=21) break;
+      const bt=$(`<div class="row"><button class="next" id="hit">Hit 🃏</button><button class="next" id="stand" style="background:var(--blue)">Stand ✋</button></div>`); area.appendChild(bt);
+      const hit=await new Promise(r=>{ bt.querySelector("#hit").onclick=()=>r(true); bt.querySelector("#stand").onclick=()=>r(false); }); bt.remove();
+      if(!hit) break; me.push(draw()); showM(); tone([660],.06);
+    }
+    let msg;
+    if(mine>21){ showD(false); msg=`${mine} is over 21. Bust! The dealer wins this one.`; oops(); }
+    else {
+      showD(false); while(handTotal(dl)<17){ dl.push(draw()); } showD(false);
+      const dt=handTotal(dl);
+      ok = (await mcStep(area,{prompt:"Now add the dealer's cards.", answer:dt, choices:numChoices(dt), hint:valHint(dl)})) && ok;
+      msg = dt>21 ? `Dealer has ${dt}. Dealer busts. You win! 🎉` : mine>dt ? `${mine} beats ${dt}. You win! 🎉` : mine===dt ? `${mine} and ${dt}. It's a tie!` : `Dealer has ${dt}. Dealer wins this time.`;
+      if(/win!/.test(msg)) yay();
+    }
+    area.appendChild($(`<div style="font-family:var(--display);font-size:24px">${msg}</div>`));
+    return ok; } };
+}
+
+function genSpell(list, bee){
+  list = list || (Math.random()<.75 ? WEEK.spelling : REVIEW.spelling);
+  const [w,sent]=pick(list); const extras="abcdefghilmnoprstu".split("").filter(c=>!w.includes(c));
+  const letters=shuffle([...w.split(""), ...shuffle(extras).slice(0, w.length>8?1:w.length>6?2:3)]);
+  return { async render(el){
+    el.appendChild($(`<div class="prompt">${bee ? "Spelling bee! Listen, say the word, spell it out loud, then tap the letters." : "Listen to the word. Tap the letters to spell it."}</div>`));
+    const row=$(`<div class="row"></div>`); el.appendChild(row);
+    if(canSpeak()){
+      const sp=$(`<button class="speak">🔊 Word</button>`); sp.onclick=()=>say(w);
+      const ss=$(`<button class="speak">🗣️ Sentence</button>`); ss.onclick=()=>say(sent);
+      const sl=$(`<button class="speak">🐢 Slow</button>`); sl.onclick=()=>say(w, .5);
+      row.append(sp,ss,sl); setTimeout(()=>say(w),300);
+    }
+    const peek=$(`<button class="tool">👀 Peek</button>`); row.appendChild(peek);
+    const slots=$(`<div class="slots"></div>`); for(let i=0;i<w.length;i++) slots.appendChild($(`<div class="slot"></div>`)); el.appendChild(slots);
+    const tl=$(`<div class="tiles-l"></div>`); el.appendChild(tl);
+    const ctl=$(`<div class="row"><button class="tool" id="undo">⌫ Undo</button><button class="tool" id="clr">Clear</button></div>`); el.appendChild(ctl);
+    const hint=$(`<div class="hint" hidden></div>`); el.appendChild(hint);
+    let typed=[], miss=false;
+    peek.onclick=()=>{ hint.innerHTML=`👀 <b style="font-size:30px">${w}</b>`; hint.hidden=false; miss=true; setTimeout(()=>{hint.hidden=true;},1800); };
+    const paint=()=>{ slots.querySelectorAll(".slot").forEach((s,i)=>s.textContent=typed[i]?typed[i].c:""); };
+    return await new Promise(res=>{
+      letters.forEach((c,i)=>{ const b=$(`<button class="lt">${c}</button>`); b.onclick=()=>{ if(typed.length>=w.length) return; typed.push({c,b}); b.disabled=true; tone([600],.05); paint();
+        if(typed.length===w.length){ const guess=typed.map(t=>t.c).join("");
+          if(guess===w){ yay(); say(w); slots.querySelectorAll(".slot").forEach(s=>s.style.color="var(--leaf)"); setTimeout(()=>res(!miss),900); }
+          else { oops(); miss=true; let k=0; while(k<w.length && guess[k]===w[k]) k++;
+            hint.innerHTML=`💡 So close! The first ${k?k+" letters are":"letter is"} right. Letter ${k+1} should be <b>${w[k]}</b>.`; hint.hidden=false;
+            const back=typed.splice(k); back.forEach(t=>t.b.disabled=false); paint(); } } };
+        tl.appendChild(b); });
+      ctl.querySelector("#undo").onclick=()=>{ const t=typed.pop(); if(t){t.b.disabled=false; paint();} };
+      ctl.querySelector("#clr").onclick=()=>{ typed.forEach(t=>t.b.disabled=false); typed=[]; paint(); };
+    });
+  } };
+}
+
+/* ===== COLORING ===== */
+const COLOR_PAGES = [
+  {id:"ladybug", name:"Ladybug", need:0, draw:(c)=>{ circ(c,300,330,190); line(c,300,140,300,520); circ(c,300,150,70); circ(c,230,260,32); circ(c,370,260,32); circ(c,210,380,36); circ(c,390,380,36); circ(c,260,460,26); circ(c,340,460,26);
+    line(c,270,90,230,30); line(c,330,90,370,30); circ(c,230,30,14); circ(c,370,30,14); line(c,115,300,60,270); line(c,110,380,50,400); line(c,485,300,540,270); line(c,490,380,550,400); }},
+  {id:"cat", name:"Kitty", need:1, draw:(c)=>{ ell(c,300,450,150,110); circ(c,300,250,140); poly(c,[[185,180],[200,60],[275,120]]); poly(c,[[415,180],[400,60],[325,120]]); circ(c,250,230,26); circ(c,350,230,26); poly(c,[[285,280],[315,280],[300,300]]);
+    line(c,300,300,300,330); arc(c,280,330,20,0,Math.PI); arc(c,320,330,20,0,Math.PI); line(c,240,295,140,280); line(c,240,310,140,320); line(c,360,295,460,280); line(c,360,310,460,320); ell(c,500,500,40,90); }},
+  {id:"fish", name:"Fishy", need:2, draw:(c)=>{ ell(c,280,300,190,120); poly(c,[[460,300],[570,200],[570,400]]); circ(c,170,270,26); circ(c,170,270,8); arc(c,300,300,120,-1.2,1.2); arc(c,380,300,120,-1,1); poly(c,[[250,185],[330,110],[350,190]]); poly(c,[[260,415],[320,480],[330,410]]); circ(c,80,170,18); circ(c,60,110,12); circ(c,90,60,9); }},
+  {id:"turtle", name:"Turtle", need:4, draw:(c)=>{ halfEll(c,300,360,210,170); line(c,90,360,510,360); poly(c,[[240,250],[360,250],[400,320],[200,320]]); line(c,240,250,190,200); line(c,360,250,410,200); line(c,200,320,140,340); line(c,400,320,460,340);
+    circ(c,560,320,48); circ(c,575,305,8); ell(c,170,400,40,30); ell(c,430,400,40,30); poly(c,[[90,360],[40,380],[95,385]]); }},
+  {id:"owl", name:"Owl", need:6, draw:(c)=>{ ell(c,300,320,170,210); circ(c,235,250,60); circ(c,365,250,60); circ(c,235,250,22); circ(c,365,250,22); poly(c,[[285,300],[315,300],[300,340]]); poly(c,[[160,130],[200,60],[240,140]]); poly(c,[[440,130],[400,60],[360,140]]);
+    ell(c,165,370,40,100); ell(c,435,370,40,100); arc(c,300,440,60,0.3,Math.PI-.3); rect(c,60,530,480,36); }},
+  {id:"butterfly", name:"Butterfly", need:8, draw:(c)=>{ ell(c,190,220,120,110); ell(c,410,220,120,110); ell(c,210,410,90,80); ell(c,390,410,90,80); ell(c,300,320,24,170); circ(c,300,140,30);
+    line(c,290,115,240,50); line(c,310,115,360,50); circ(c,240,50,10); circ(c,360,50,10); circ(c,180,210,40); circ(c,420,210,40); circ(c,210,410,30); circ(c,390,410,30); }},
+];
+function line(c,a,b,x,y){ c.beginPath(); c.moveTo(a,b); c.lineTo(x,y); c.stroke(); }
+function circ(c,x,y,r){ c.beginPath(); c.arc(x,y,r,0,Math.PI*2); c.stroke(); }
+function ell(c,x,y,rx,ry){ c.beginPath(); c.ellipse(x,y,rx,ry,0,0,Math.PI*2); c.stroke(); }
+function halfEll(c,x,y,rx,ry){ c.beginPath(); c.ellipse(x,y,rx,ry,0,Math.PI,Math.PI*2); c.stroke(); }
+function arc(c,x,y,r,s,e){ c.beginPath(); c.arc(x,y,r,s,e); c.stroke(); }
+function poly(c,pts){ c.beginPath(); c.moveTo(...pts[0]); pts.slice(1).forEach(p=>c.lineTo(...p)); c.closePath(); c.stroke(); }
+function rect(c,x,y,w,h){ c.strokeRect(x,y,w,h); }
+function paintOutline(ctx,page){ ctx.fillStyle="#fff"; ctx.fillRect(0,0,600,600); ctx.strokeStyle="#1f2a44"; ctx.lineWidth=7; ctx.lineCap="round"; ctx.lineJoin="round"; page.draw(ctx); }
+function floodFill(ctx,x,y,hex){
+  const W=600,H=600; const img=ctx.getImageData(0,0,W,H), d=img.data;
+  const fr=parseInt(hex.slice(1,3),16), fg=parseInt(hex.slice(3,5),16), fb=parseInt(hex.slice(5,7),16);
+  const i0=(y*W+x)*4; const sr=d[i0], sg=d[i0+1], sb=d[i0+2];
+  const isLine=(i)=> d[i]<110 && d[i+1]<110 && d[i+2]<130 && Math.abs(d[i]-fr)+Math.abs(d[i+1]-fg)+Math.abs(d[i+2]-fb)>40;
+  if(isLine(i0)) return; if(Math.abs(sr-fr)+Math.abs(sg-fg)+Math.abs(sb-fb)<8) return;
+  const match=(i)=> !isLine(i) && Math.abs(d[i]-sr)+Math.abs(d[i+1]-sg)+Math.abs(d[i+2]-sb)<90;
+  const stack=[[x,y]]; const seen=new Uint8Array(W*H);
+  while(stack.length){ let [cx,cy]=stack.pop(); let p=cy*W+cx; while(cx>=0 && !seen[p] && match(p*4)){ cx--; p--; } cx++; p++; let up=false, dn=false;
+    while(cx<W && !seen[p] && match(p*4)){ seen[p]=1; const i=p*4; d[i]=fr; d[i+1]=fg; d[i+2]=fb; d[i+3]=255;
+      if(cy>0){ const q=p-W; if(!seen[q]&&match(q*4)){ if(!up){stack.push([cx,cy-1]);up=true;} } else up=false; }
+      if(cy<H-1){ const q=p+W; if(!seen[q]&&match(q*4)){ if(!dn){stack.push([cx,cy+1]);dn=true;} } else dn=false; }
+      cx++; p++; } }
+  ctx.putImageData(img,0,0);
+}
+const CRAYONS=["#e0483d","#ff8a3d","#f6c21c","#9bd13b","#2f9e5b","#3fc1c9","#2f6fd6","#7b5bd6","#e46fb5","#8a5a3b","#9aa3b5","#1f2a44","#ffffff"];
+
+/* ===== VIEWS ===== */
+let view="home", current=null;
+const app=document.getElementById("app");
+function go(v,arg){ view=v; soundRun++; document.querySelector(".sheet")?.remove(); try{speechSynthesis.cancel();}catch(e){} render(arg); scrollTo(0,0); }
+function topBar(back){ return `<div class="top"><div class="brand">${back?'<button class="back" id="bk">← Home</button>':'<span style="font-size:36px">🐞</span><h1>Ladybug Lab</h1>'}</div>
+  <div class="pills"><span class="pill" title="Stars">⭐ <span id="pstars">${S.stars}</span></span><span class="pill" title="Days in a row">🔥 <span id="pstreak">${S.streak}</span></span><span class="pill" title="Stickers">🏅 ${S.stickers.length}</span></div></div>`; }
+function updatePills(){ const a=document.getElementById("pstars"), b=document.getElementById("pstreak"); if(a) a.textContent=S.stars; if(b) b.textContent=S.streak; }
+function bindBack(){ const b=document.getElementById("bk"); if(b) b.onclick=()=>go("home"); }
+
+function render(arg){
+  app.innerHTML="";
+  if(view==="home") return renderHome();
+  if(view==="stickers") return renderStickers();
+  if(view==="color") return renderColorPick();
+  if(view==="paint") return renderPaint(arg);
+  if(view==="name") return renderName();
+  if(view==="parent") return renderParent();
+  if(view==="make") return renderMake();
+  if(view==="library") return renderLibrary();
+  if(view==="read") return renderRead(arg);
+}
+function tileHTML(g){ return `<button class="tile ${g.color}" data-g="${g.id}"><span class="ico">${g.ico}</span><b>${g.name}</b><span>${typeof g.desc==="function"?g.desc():g.desc}</span></button>`; }
+function renderHome(){
+  const nm = S.name ? S.name : "friend";
+  app.innerHTML = topBar(false) + `
+  <div class="hello"><span style="font-size:54px">${S.stickers.length? S.stickers[S.stickers.length-1] : "🐞"}</span><div>
+    <h2>Hi, ${escapeHTML(nm)}!</h2><p>${S.streak>1? `You've practiced ${S.streak} days in a row!` : "Pick a game. Every right answer earns a star."} ${S.name?"":'<button class="namebtn" id="setname">Add your name</button>'}</p></div></div>
+  <h2 class="section-h">Reading</h2><div class="tiles">
+    <button class="tile t-sun" id="golib"><span class="ico">📚</span><b>Story Time</b><span>${(()=>{const n=nextStory(); return n?`Next: ${n.title} (level ${n.lvl})`:"You read every story!";})()}</span></button>
+    ${GAMES.filter(g=>g.area==="reading").map(tileHTML).join("")}</div>
+  <h2 class="section-h">Math</h2><div class="tiles">${GAMES.filter(g=>g.area==="math").map(tileHTML).join("")}</div>
+  <h2 class="section-h">Words</h2><div class="tiles">${GAMES.filter(g=>g.area==="words").map(tileHTML).join("")}</div>
+  <h2 class="section-h">Review</h2><div class="tiles">${GAMES.filter(g=>g.area==="review").map(tileHTML).join("")}</div>
+  <h2 class="section-h">Make &amp; Play</h2><div class="tiles">
+    <button class="tile t-leaf" id="gomake"><span class="ico">🦄</span><b>Make a Problem</b><span>Write your own math story</span></button>
+    ${GAMES.filter(g=>g.area==="create").map(tileHTML).join("")}</div>
+  <h2 class="section-h">Fun stuff</h2><div class="tiles">
+    <button class="tile t-sun" id="gost"><span class="ico">📒</span><b>Sticker Book</b><span>${S.stickers.length} of ${STICKERS.length} stickers</span></button>
+    <button class="tile t-grape" id="gocol"><span class="ico">🖍️</span><b>Coloring</b><span>${COLOR_PAGES.filter(p=>S.rounds>=p.need).length} of ${COLOR_PAGES.length} pages open</span></button></div>
+  <p class="week">${WEEK.label} · <button class="namebtn" id="gopar">Grown-ups</button></p>`;
+  app.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{ if(b.dataset.g==="mine" && !S.mine.length) return go("make"); startGame(b.dataset.g); });
+  app.querySelector("#gomake").onclick=()=>go("make"); app.querySelector("#golib").onclick=()=>go("library");
+  app.querySelector("#gost").onclick=()=>go("stickers"); app.querySelector("#gocol").onclick=()=>go("color"); app.querySelector("#gopar").onclick=()=>go("parent");
+  const sn=app.querySelector("#setname"); if(sn) sn.onclick=()=>go("name");
+}
+function escapeHTML(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function renderName(){
+  app.innerHTML = topBar(true)+`<div class="game"><h2>What's your name?</h2><form class="nameform" id="nf"><input id="nameinput" maxlength="16" value="${escapeHTML(S.name)}" autocomplete="off" aria-label="Your name"><button class="next">Save</button></form></div>`;
+  bindBack(); const f=app.querySelector("#nf"); const inp=app.querySelector("#nameinput"); inp.focus();
+  f.onsubmit=(e)=>{ e.preventDefault(); S.name=inp.value.trim().slice(0,16); save(); go("home"); };
+}
+
+async function startGame(id){
+  const g= typeof id==="string" ? GAMES.find(x=>x.id===id) : id; current=g; view="game"; scrollTo(0,0);
+  app.innerHTML = topBar(true)+`<div class="game" id="gm"><h2>${g.ico} ${g.name}</h2><div class="prog" id="pg"></div><div id="area" style="display:flex;flex-direction:column;gap:16px;align-items:center;width:100%"></div></div>`;
+  bindBack(); try{speechSynthesis.cancel();}catch(e){}
+  const N=g.single?1:5; const pg=app.querySelector("#pg"); const area=app.querySelector("#area");
+  for(let q=0;q<N;q++){
+    if(view!=="game"||current!==g) return;
+    pg.innerHTML = Array.from({length:N},(_,i)=>`<i class="${i<q?'done':i===q?'now':''}"></i>`).join("");
+    area.innerHTML=""; const qn=g.gen();
+    const first = await qn.render(area);
+    if(view!=="game"||current!==g||!document.body.contains(area)) return;
+    addStar(); if(first){ /* small bonus sparkle */ }
+    area.appendChild($(`<div style="font-family:var(--display);font-size:24px;color:var(--leaf)">${first? pick(["Great job!","You got it!","Super!","Awesome!","Nice work!"]) : pick(["You figured it out!","Way to keep trying!","Nice thinking!"])} +1 ⭐</div>`));
+    if(g.single){ const nx=$(`<button class="next">Make another</button>`); area.appendChild(nx); nx.onclick=()=>go("make"); return; }
+    const nx=$(`<button class="next">${q<N-1?"Next →":"Finish!"}</button>`); area.appendChild(nx);
+    await new Promise(r=>nx.onclick=r);
+  }
+  pg.innerHTML = Array.from({length:N},()=>`<i class="done"></i>`).join("");
+  finishRound();
+}
+
+/* ===== MAKE A PROBLEM ===== */
+const MK={theme:"unicorn", type:"join", a:6, b:3, text:""};
+function renderMake(){
+  app.innerHTML = topBar(true)+`<div class="game" style="gap:14px"><h2>🦄 Make a Problem</h2>
+    <div class="mk-lbl">1. Pick a story</div>
+    <div class="chips" id="th">${Object.entries(THEMES).map(([k,t])=>`<button class="chip ${MK.theme===k?'on':''}" data-t="${k}">${t.ico} ${t.name}</button>`).join("")}</div>
+    <div class="mk-lbl">2. Add or take away?</div>
+    <div class="chips" id="ty">${Object.entries(TYPES).map(([k,t])=>`<button class="chip ${MK.type===k?'on':''}" data-y="${k}">${t.ico} ${t.name}</button>`).join("")}</div>
+    <div class="mk-lbl">3. Pick your numbers</div>
+    <div class="row" style="gap:18px">${["a","b"].map(k=>`<div><div class="lbl">${k==="a"?"First number":"Second number"}</div><div class="stepper">
+      <button data-k="${k}" data-d="-10">−10</button><button data-k="${k}" data-d="-1">−1</button><span class="n" id="n${k}"></span><button data-k="${k}" data-d="1">+1</button><button data-k="${k}" data-d="10">+10</button></div></div>`).join("")}</div>
+    <div class="preview" id="pv"></div><div id="wn" class="warn" hidden></div>
+    <div class="row"><button class="speak" id="rd">🔊 Read it</button><button class="next" id="solve">Solve it now</button><button class="next" id="sv" style="background:var(--blue)">Save it ⭐</button></div>
+    <details style="width:100%;max-width:460px;text-align:left"><summary class="lbl">Grown-ups: write your own words (optional)</summary>
+      <textarea class="mk-text" id="tx" maxlength="240" placeholder="Type a story that uses the two numbers above.">${escapeHTML(MK.text)}</textarea></details>
+    <div id="saved" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:8px"></div></div>`;
+  bindBack();
+  const pv=app.querySelector("#pv"), wn=app.querySelector("#wn");
+  const valid=()=>{ if(MK.type!=="join" && MK.a<MK.b) return "The first number needs to be bigger."; if(MK.type!=="join" && MK.a===MK.b) return MK.type==="take"?"":"Make the numbers different so one has more."; if(MK.type==="join" && MK.a+MK.b>100) return "Keep the answer at 100 or less."; if(MK.a<1||MK.b<1) return "Use numbers bigger than 0."; return ""; };
+  const upd=()=>{ app.querySelector("#na").textContent=MK.a; app.querySelector("#nb").textContent=MK.b;
+    pv.textContent = MK.text.trim() || THEMES[MK.theme][MK.type](MK.a,MK.b);
+    const v=valid(); wn.textContent=v; wn.hidden=!v; app.querySelector("#sv").disabled=!!v; app.querySelector("#solve").disabled=!!v;
+    app.querySelector("#sv").style.opacity=app.querySelector("#solve").style.opacity = v?.4:1; };
+  app.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{ MK.theme=b.dataset.t; app.querySelectorAll("[data-t]").forEach(x=>x.classList.toggle("on",x===b)); tone([700],.04); upd(); });
+  app.querySelectorAll("[data-y]").forEach(b=>b.onclick=()=>{ MK.type=b.dataset.y; app.querySelectorAll("[data-y]").forEach(x=>x.classList.toggle("on",x===b)); tone([700],.04); upd(); });
+  app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ const k=b.dataset.k; MK[k]=Math.max(1,Math.min(99,MK[k]+ +b.dataset.d)); tone([520],.03); upd(); });
+  app.querySelector("#tx").oninput=(e)=>{ MK.text=e.target.value; upd(); };
+  app.querySelector("#rd").onclick=()=>say(pv.textContent);
+  const cur=()=>({theme:MK.theme,type:MK.type,a:MK.a,b:MK.b,...(MK.text.trim()?{text:MK.text.trim()}:{})});
+  app.querySelector("#solve").onclick=()=>{ const p=cur(); startGame({id:"one", ico:THEMES[p.theme].ico, name:"Your Problem", single:true, gen:()=>genOwn(p)}); };
+  app.querySelector("#sv").onclick=()=>{ S.mine.unshift(cur()); S.mine=S.mine.slice(0,40); S.mineAt=Date.now(); save(); yay(); MK.text=""; app.querySelector("#tx").value=""; upd(); list(); };
+  const box=app.querySelector("#saved");
+  const list=()=>{ box.innerHTML = S.mine.length ? `<div class="mk-lbl">My saved problems (${S.mine.length})</div><button class="next" id="playmine">Play my problems ⭐</button><div class="mylist">${S.mine.map((p,i)=>`<div class="myitem">${THEMES[p.theme]?.ico||"⭐"}<span>${escapeHTML(problemParts(p).text)}</span><button class="tool" data-del="${i}" aria-label="Delete">✕</button></div>`).join("")}</div>` : `<p class="prompt">Saved problems show up here. Save a few, then play them!</p>`;
+    const pm=box.querySelector("#playmine"); if(pm) pm.onclick=()=>startGame("mine");
+    box.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{ S.mine.splice(+b.dataset.del,1); S.mineAt=Date.now(); save(); list(); }); };
+  upd(); list();
+}
+
+function renderStickers(){
+  app.innerHTML = topBar(true)+`<div class="book"><h2>My Sticker Book</h2><p class="prompt" style="max-width:none;text-align:left">Finish a round of any game to earn a new animal sticker.</p>
+  <div class="sgrid">${STICKERS.map((s,i)=> S.stickers.includes(s)? `<div class="st ${i===STICKERS.indexOf(S.stickers[S.stickers.length-1])?'new':''}">${s}</div>` : `<div class="st empty">?</div>`).join("")}</div></div>`;
+  bindBack();
+}
+function renderColorPick(){
+  app.innerHTML = topBar(true)+`<div class="book"><h2>Coloring Pages</h2><p class="prompt" style="max-width:none;text-align:left">Finish rounds to open new pages. Tap a space to fill it with color.</p><div class="cpick" id="cpk"></div></div>`;
+  bindBack(); const box=app.querySelector("#cpk");
+  COLOR_PAGES.forEach(p=>{ const open=S.rounds>=p.need; const b=$(`<button class="cp ${open?'':'locked'}"><canvas width="600" height="600"></canvas>${open?p.name:`🔒 ${p.need-S.rounds} more round${p.need-S.rounds>1?"s":""}`}</button>`);
+    const ctx=b.querySelector("canvas").getContext("2d"); const saved=loadPaint(p.id);
+    if(saved && open){ const im=new Image(); im.onload=()=>ctx.drawImage(im,0,0); im.src=saved; } else paintOutline(ctx,p);
+    if(open) b.onclick=()=>go("paint",p.id); box.appendChild(b); });
+}
+function loadPaint(id){ try{ return localStorage.getItem("llab-paint-"+id); }catch(e){ return null; } }
+function savePaint(id,cv){ try{ localStorage.setItem("llab-paint-"+id, cv.toDataURL("image/png")); }catch(e){} }
+function renderPaint(id){
+  const p=COLOR_PAGES.find(x=>x.id===id);
+  app.innerHTML = topBar(true)+`<div class="game"><h2>${p.name}</h2>
+   <div class="modes"><button class="tool mode on" data-m="fill">🪣 Fill</button><button class="tool mode" data-m="draw">🖍️ Draw</button><button class="tool" id="undoP">⌫ Undo</button><button class="tool" id="newP">Start over</button></div>
+   <div class="canvaswrap"><canvas id="cv" width="600" height="600" aria-label="Coloring page: ${p.name}"></canvas></div>
+   <div class="palette" id="pal"></div><div id="conf" class="row"></div></div>`;
+  bindBack();
+  const cv=app.querySelector("#cv"), ctx=cv.getContext("2d",{willReadFrequently:true});
+  const saved=loadPaint(id); if(saved){ const im=new Image(); im.onload=()=>ctx.drawImage(im,0,0); im.src=saved; } else paintOutline(ctx,p);
+  let color=CRAYONS[0], mode="fill", hist=[];
+  const pal=app.querySelector("#pal"); CRAYONS.forEach((c,i)=>{ const b=$(`<button class="sw ${i===0?'on':''}" style="background:${c}" aria-label="Color ${i+1}"></button>`); b.onclick=()=>{ color=c; pal.querySelectorAll(".sw").forEach(x=>x.classList.remove("on")); b.classList.add("on"); }; pal.appendChild(b); });
+  app.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{ mode=b.dataset.m; app.querySelectorAll(".mode").forEach(x=>x.classList.toggle("on",x===b)); });
+  const pos=(e)=>{ const r=cv.getBoundingClientRect(); return [Math.max(0,Math.min(599,Math.floor((e.clientX-r.left)/r.width*600))), Math.max(0,Math.min(599,Math.floor((e.clientY-r.top)/r.height*600)))]; };
+  const snap=()=>{ hist.push(ctx.getImageData(0,0,600,600)); if(hist.length>15) hist.shift(); };
+  let drawing=false, last=null;
+  cv.addEventListener("pointerdown",e=>{ e.preventDefault(); const [x,y]=pos(e); snap();
+    if(mode==="fill"){ floodFill(ctx,x,y,color); tone([700],.04); savePaint(id,cv); }
+    else { drawing=true; last=[x,y]; cv.setPointerCapture(e.pointerId); ctx.strokeStyle=color; ctx.lineWidth=14; ctx.lineCap="round"; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+.1,y+.1); ctx.stroke(); } });
+  cv.addEventListener("pointermove",e=>{ if(!drawing) return; const [x,y]=pos(e); ctx.beginPath(); ctx.moveTo(...last); ctx.lineTo(x,y); ctx.stroke(); last=[x,y]; });
+  const end=()=>{ if(drawing){ drawing=false; savePaint(id,cv);} }; cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",end);
+  app.querySelector("#undoP").onclick=()=>{ const h=hist.pop(); if(h){ ctx.putImageData(h,0,0); savePaint(id,cv);} };
+  const conf=app.querySelector("#conf");
+  app.querySelector("#newP").onclick=()=>{ conf.innerHTML=""; const y=$(`<button class="danger">Yes, erase my colors</button>`), n=$(`<button class="tool">Keep it</button>`);
+    y.onclick=()=>{ snap(); paintOutline(ctx,p); savePaint(id,cv); conf.innerHTML=""; }; n.onclick=()=>conf.innerHTML=""; conf.append(y,n); };
+}
+function renderParent(){
+  app.innerHTML = topBar(true)+`<div class="book parent"><h2 style="color:var(--ink)">For grown-ups</h2>
+  <p><b>This week:</b> ${WEEK.label}.</p>
+  <ul><li><b>Math</b> follows Reveal Math Unit 5: doubles, near doubles, making a 10, counting on, splitting into tens and ones, and adjusting to friendly numbers.</li>
+  <li><b>Words</b> use her UFLI lists: open/closed syllables, compound words, and the heart words <i>friend</i> and <i>because</i>.</li>
+  <li><b>Listen &amp; Spell</b> reads words aloud using the device's voice. If you hear nothing, check that the iPad isn't on silent.</li>
+  <li><b>Review</b> keeps earlier weeks fresh: ${REVIEW.label}. <i>Spelling Bee</i> uses the 50 Scripps second-grade study words (schoolwide bee is Dec 10). <i>Mix It Up</i> pulls from every game.</li>
+  <li><b>Story Time</b> has 10 stories written for guided reading levels I through M (the levels are estimates). She reads aloud and taps any word she's stuck on. The word is split into its sound parts and syllables, and each part lights up left to right before the word is said slowly, then at normal speed. This trains her to look all the way through a word instead of guessing from the first letters. After the questions, <i>Read along</i> highlights each word as it's read, for fluency. Tip: when she guesses, point to the end of the word and say "check the end."</li>
+  <li><b>Look to the End</b> plays a word, and she picks it from words that all start the same way (horse, house, hose, home).</li>
+  <li><b>Make a Problem</b> lets her (or you) build a story problem: pick a theme, add or take away, and two numbers. Save them to <i>My Problems</i> to play later. You can type your own story under "Grown-ups."</li>
+  <li><b>Blackjack 21</b> has her add every hand (hers and the dealer's) before she can hit or stand.</li></ul>
+  <p><b>Rewards:</b> 1 star per question, a new sticker for each 5-question round, and new coloring pages as rounds add up. The 🔥 number counts days in a row with practice.</p>
+  <div class="book" style="background:var(--bg);box-shadow:none;padding:14px;margin:10px 0">
+    <h3 style="color:var(--ink)">Her progress on other devices</h3>
+    <p id="syncnote">${escapeHTML(syncNote)}</p>
+    ${WEB ? (FAMILY ? `<p><b>Add another device:</b> open this family link on it (text or email it to yourself). Anyone with this link can see and add to her progress, so only share it with family.</p>
+      <div class="row" style="justify-content:flex-start"><button class="tool" id="fl">Copy family link</button><button class="tool" id="fd">Disconnect this device</button><span id="flmsg"></span></div>`
+     : `<p><b>Set up family sync</b> once, on your first device. Then open the family link on her other devices.</p>
+      <div class="row" style="justify-content:flex-start"><button class="tool" id="fnew">Create family sync</button></div>
+      <div class="row" style="justify-content:flex-start;margin-top:8px"><input id="famin" class="mk-text" style="min-height:0;max-width:340px;text-transform:uppercase" placeholder="Or type a family code" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="tool" id="fjoin">Join</button></div>`) : ""}
+    <p><b>No internet sync on a device?</b> Get a progress code here and type it into the Grown-ups page on the other device. It adds her stars, stickers, streak, and finished stories. Her name, saved problems, tricky words, and coloring pictures stay on each device. Codes never double-count, so you can move them back and forth.</p>
+    <div class="row" style="justify-content:flex-start"><button class="tool" id="gc">Get progress code</button></div>
+    <div id="codebox" hidden style="margin-top:8px"><div id="codeval" style="font-family:ui-monospace,Menlo,monospace;font-size:22px;font-weight:700;color:var(--ink);letter-spacing:1px;word-break:break-word;-webkit-user-select:all;user-select:all"></div>
+      <div class="row" style="justify-content:flex-start;margin-top:6px"><button class="tool" id="cc">Copy</button><span id="ccmsg"></span></div></div>
+    <div class="row" style="justify-content:flex-start;margin-top:12px"><input id="codein" class="mk-text" style="min-height:0;max-width:340px;text-transform:uppercase" placeholder="Type a progress code" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="tool" id="ci">Add progress</button></div>
+    <div id="cimsg" style="margin-top:6px"></div></div>
+  <p><b>Tricky words she tapped</b> (most taps first): ${(()=>{ const t=Object.entries(S.tricky||{}).sort((a,b)=>b[1]-a[1]).slice(0,30); return t.length? t.map(([w,n])=>`${escapeHTML(w)}${n>1?` (${n})`:""}`).join(", ") : "none yet"; })()}</p>
+  <p>Each week, send the new word sheets and math topics to Claude to update the games.</p>
+  <div class="row" style="justify-content:flex-start;margin-top:10px"><button class="tool" id="chname">Change name</button><button class="danger" id="rst">Reset all progress</button></div><div id="rc" class="row" style="justify-content:flex-start;margin-top:8px"></div></div>`;
+  bindBack(); app.querySelector("#chname").onclick=()=>go("name");
+  const fl=app.querySelector("#fl"); if(fl) fl.onclick=async()=>{ const link=familyLink(); try{ if(navigator.share) await navigator.share({title:"Ladybug Lab", url:link}); else { await navigator.clipboard.writeText(link); app.querySelector("#flmsg").textContent="Copied!"; } }catch(e){ app.querySelector("#flmsg").textContent=link; } };
+  const fd=app.querySelector("#fd"); if(fd) fd.onclick=()=>{ FAMILY=""; try{ localStorage.removeItem("llab-family"); }catch(e){} history.replaceState(null,"",location.pathname); syncNote="Disconnected. Progress is saved on this device only."; render(); };
+  const joinFam=(code)=>{ FAMILY=cleanFam(code); if(FAMILY.length<16){ app.querySelector("#syncnote").innerHTML='<span class="warn">That family code is too short.</span>'; FAMILY=""; return; } try{ localStorage.setItem("llab-family",FAMILY); }catch(e){} history.replaceState(null,"",familyLink()); startWebSync(); setTimeout(()=>{ if(view==="parent") render(); },2500); render(); };
+  const fn=app.querySelector("#fnew"); if(fn) fn.onclick=()=>joinFam(newFamilyCode());
+  const fj=app.querySelector("#fjoin"); if(fj) fj.onclick=()=>joinFam(app.querySelector("#famin").value);
+  app.querySelector("#gc").onclick=()=>{ app.querySelector("#codeval").textContent=makeCode(); app.querySelector("#codebox").hidden=false; };
+  app.querySelector("#cc").onclick=async()=>{ try{ await navigator.clipboard.writeText(app.querySelector("#codeval").textContent); app.querySelector("#ccmsg").textContent="Copied!"; }catch(e){ app.querySelector("#ccmsg").textContent="Press and hold the code to copy it."; } };
+  app.querySelector("#ci").onclick=()=>{ const msg=app.querySelector("#cimsg"); const st=readCode(app.querySelector("#codein").value);
+    if(!st){ msg.innerHTML='<span class="warn">That code doesn\'t look right. Check it and try again.</span>'; return; }
+    const before=S.stars; S=mergeState(S,st); save(); msg.innerHTML=`<b style="color:var(--leaf)">Added! She now has ${S.stars} stars and ${S.stickers.length} stickers${S.stars>before?` (+${S.stars-before} stars)`:""}.</b>`; app.querySelector("#codein").value=""; updatePills(); };
+  const rc=app.querySelector("#rc");
+  app.querySelector("#rst").onclick=()=>{ rc.innerHTML=""; const y=$(`<button class="danger">Yes, erase stars and stickers</button>`), n=$(`<button class="tool">Cancel</button>`);
+    y.onclick=()=>{ const nm=S.name, mine=S.mine, mineAt=S.mineAt, ep=(S.epoch||0)+1; S=norm({name:nm,mine,mineAt,epoch:ep,dev:{}}); save(); go("home"); }; n.onclick=()=>rc.innerHTML=""; rc.append(y,n); };
+}
+render();
+</script>
+
+<script>if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
+</body></html>

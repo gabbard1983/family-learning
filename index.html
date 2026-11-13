@@ -8,7 +8,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="Ladybug Lab">
-<script src="../config.js"></script>
+<script src="config.js"></script>
 <style>html,body{margin:0}body{padding-top:max(12px,env(safe-area-inset-top,0px))!important}</style>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -526,7 +526,7 @@ function readFamilyFromURL(){ const m=location.hash.match(/family=([0-9A-Za-z-]+
 function familyLink(){ return location.origin+location.pathname+"#family="+FAMILY.match(/.{1,4}/g).join("-"); }
 function newFamilyCode(){ const r=new Uint8Array(20); crypto.getRandomValues(r); return Array.from(r,x=>B32[x%32]).join(""); }
 async function rpc(fn,args){
-  const r = await fetch(WEB.supabaseUrl.replace(/\/$/,"")+"/rest/v1/rpc/"+fn, {method:"POST", headers:{apikey:WEB.supabaseKey, Authorization:"Bearer "+WEB.supabaseKey, "Content-Type":"application/json"}, body:JSON.stringify(args)});
+  const r = await fetch(WEB.supabaseUrl.replace(/\/$/,"")+"/rest/v1/rpc/"+fn, {method:"POST", headers:Object.assign({apikey:WEB.supabaseKey, "Content-Type":"application/json"}, /^eyJ/.test(WEB.supabaseKey)?{Authorization:"Bearer "+WEB.supabaseKey}:{}), body:JSON.stringify(args)});
   if(!r.ok) throw new Error("sync "+r.status); return r.json();
 }
 async function webPull(){

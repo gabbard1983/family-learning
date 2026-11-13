@@ -1,9 +1,9 @@
-"""Build the website pages from source/.  Run:  python3 tools/build.py"""
+"""Builds index.html (Ladybug Lab) and summit/index.html (Summit).  Run:  python3 build.py"""
 import os, re, json
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.dirname(os.path.abspath(__file__))
 
-def build_app(src_name, out_dir, title, short, theme):
-    src = open(os.path.join(ROOT, "source", src_name), encoding="utf-8").read()
+def build_app(src_name, out_dir, title, short, theme, config_path="config.js"):
+    src = open(os.path.join(ROOT, src_name), encoding="utf-8").read()
     cut = src.index("</style>") + len("</style>")
     src = src.replace("? \"kid1\" : \"winnie\"", "? \"kid1\" : \"kid1\"")  # keep names out of the public site
     cut = src.index("</style>") + len("</style>")
@@ -19,7 +19,7 @@ def build_app(src_name, out_dir, title, short, theme):
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="{short}">
-<script src="../config.js"></script>
+<script src="{config_path}"></script>
 <style>html,body{{margin:0}}body{{padding-top:max(12px,env(safe-area-inset-top,0px))!important}}</style>
 {head}
 </head><body>
@@ -47,4 +47,5 @@ self.addEventListener("fetch",e=>{
 """)
     print("built", out_dir)
 
-build_app("ladybug-lab.html", "ladybug", "Ladybug Lab", "Ladybug Lab", "#e0483d")
+build_app("ladybug-lab.html", ".", "Ladybug Lab", "Ladybug Lab", "#e0483d")
+build_app("summit-source.html", "summit", "Summit", "Summit", "#D4622A", "../config.js")
